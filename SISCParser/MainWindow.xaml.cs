@@ -30,6 +30,8 @@ namespace SISCParser
 
       public MainWindow()
       {
+         Resources["Membres"] = listeDesMembres;
+
          InitializeComponent();
       }
 
@@ -51,41 +53,46 @@ namespace SISCParser
 
       public void ParseMembers(string filename)
       {
-         bool bChampLus = false;
-         using (TextFieldParser parser = new TextFieldParser(filename, Encoding.Default))
+         Task parseListeMembres = Task.Run(() =>
          {
-            parser.TextFieldType = FieldType.Delimited;
-            parser.SetDelimiters(";");
-            while (!parser.EndOfData)
+
+            bool bChampLus = false;
+            using (TextFieldParser parser = new TextFieldParser(filename, Encoding.Default))
             {
-               //Process row
-               string[] fields = parser.ReadFields();
-               if (!bChampLus)
+               parser.TextFieldType = FieldType.Delimited;
+               parser.SetDelimiters(";");
+               while (!parser.EndOfData)
                {
-                  nomDesChamps = fields.ToList();
-                  bChampLus = true;
-               }
-               else
-               {
-                  Membre membrecourant = null;
-                  string codepermanent = fields.ElementAt(GetFieldIndex("code_permanent"));
-                  if(!listeDesMembres.ContainsKey(codepermanent))
+                  //Process row
+                  string[] fields = parser.ReadFields();
+                  if (!bChampLus)
                   {
-                     membrecourant = new Membre();
-                     membrecourant.Prenom = fields.ElementAt(GetFieldIndex("prenom"));
-                     membrecourant.Nom = fields.ElementAt(GetFieldIndex("nom"));
-                     listeDesMembres.Add(codepermanent, membrecourant);
+                     nomDesChamps = fields.ToList();
+                     bChampLus = true;
+                  }
+                  else
+                  {
+                     Membre membrecourant = null;
+                     string codepermanent = fields.ElementAt(GetFieldIndex("code_permanent"));
+                     if (!listeDesMembres.ContainsKey(codepermanent))
+                     {
+                        membrecourant = new Membre();
+                        membrecourant.Prenom = fields.ElementAt(GetFieldIndex("prenom"));
+                        membrecourant.Nom = fields.ElementAt(GetFieldIndex("nom"));
+                        membrecourant.Naissance = DateTime.ParseExact(fields.ElementAt(GetFieldIndex("naissance")), "yyyyMMdd", null);
+                        listeDesMembres.Add(codepermanent, membrecourant);
+                     }
                   }
                }
-            }
 
-            StringBuilder prettyDict = new StringBuilder();
-            foreach (var pair in listeDesMembres)
-            {
-               prettyDict.Append(String.Format(" {0} {1} \n ", pair.Key.ToUpper(), pair.Value));
+               //StringBuilder prettyDict = new StringBuilder();
+               //foreach (var pair in listeDesMembres)
+               //{
+               //   prettyDict.Append(String.Format(" {0} {1} \n ", pair.Key.ToUpper(), pair.Value));
+               //}
+               //txtEditor.Text = prettyDict.ToString();
             }
-            txtEditor.Text = prettyDict.ToString();
-         }
+         });
       }
    }
 }

@@ -4,11 +4,14 @@ namespace SISCParser
 {
    internal class Membre
    {
-      public string Nom;
-      public string Prenom;
-      public string Sexe;
-      public DateTime Naissance;
-      public DateTime Inscription;
+      public string Nom { get; set; }
+      public string Prenom { get; set; }
+      public string Sexe { get; set; }
+      public DateTime Naissance { get; set; }
+      public string NaissanceStr {
+         get { return Naissance.ToString("yyyy-MM-dd"); }
+         }
+      public DateTime Inscription { get; set; }
 
       public override string ToString()
       {
