@@ -8,12 +8,15 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
    <DockPanel Margin="10">
-      <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
-         <Button Name="btnOpenFile" Click="btnOpenFile_Click">Open file</Button>
+      <WrapPanel Margin="0,0,-2,10" DockPanel.Dock="Top">
+         <Label Content="Fichier des membres:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch"/>
+         <TextBox Name="txtMembreCSV" Width="200" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0"/>
+         <Button Name="btnOpenFile" Click="btnOpenFile_Click" HorizontalAlignment="Right" Margin="0,0,10,0">Open file</Button>
       </WrapPanel>
       <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
-      <Button Name="btnParseMembers" Content="Lister les membres" Width="auto" Click="BtnParseMembers_Click"/>
+         <Button Name="btnParseMembers" Content="Lister les membres" Width="auto" Click="BtnParseMembers_Click"/>
       </WrapPanel>
+
       <Label Content="Liste de membres: &#xD;&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Height="16" Padding="0"/>
       <!--<TextBox Name="txtEditor" VerticalScrollBarVisibility="Auto"/>-->
       

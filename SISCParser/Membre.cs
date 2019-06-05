@@ -15,7 +15,7 @@ namespace SISCParser
 
       public override string ToString()
       {
-         return Prenom + " " + Nom;
+         return Prenom + " " + Nom + " " + Naissance.ToString("yyyy-MM-dd");
       }
    }
 }

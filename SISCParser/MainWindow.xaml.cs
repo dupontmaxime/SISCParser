@@ -42,6 +42,8 @@ namespace SISCParser
             memberfilename = openFileDialog.FileName;
          else
             memberfilename = null;
+
+         txtMembreCSV.Text = memberfilename;
       }
 
       private void BtnParseMembers_Click(object sender, RoutedEventArgs e)
