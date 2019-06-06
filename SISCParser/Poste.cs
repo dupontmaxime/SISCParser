@@ -7,7 +7,7 @@ namespace SISCParser
       public Poste(string poste, string palier, string fonction, string debut, string fin)
       {
          NomDePoste = poste;
-         Palier = palier;
+         PalierDuPoste = new Palier(palier);
          Fonction = fonction;
          if(debut.Trim().Length != 0)
             Debut = DateTime.ParseExact(debut, "yyyyMMdd", null);
@@ -15,10 +15,10 @@ namespace SISCParser
             Fin = DateTime.ParseExact(fin, "yyyyMMdd", null);
       }
 
-      string NomDePoste { get; set; }
-      string Palier { get; set; }
-      string Fonction { get; set; }
-      DateTime Debut { get; set; }
-      DateTime Fin { get; set; }
+      public string NomDePoste { get; set; }
+      public Palier PalierDuPoste { get; set; }
+      public string Fonction { get; set; }
+      public DateTime Debut { get; set; }
+      public DateTime Fin { get; set; }
    }
 }

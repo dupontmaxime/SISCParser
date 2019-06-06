@@ -33,6 +33,8 @@
                             DisplayMemberBinding="{Binding Value.NaissanceStr}" />
                <GridViewColumn Header="VAJ"
                             DisplayMemberBinding="{Binding Value.Vaj}" />
+               <GridViewColumn Header="Branche"
+                            DisplayMemberBinding="{Binding Value.Paliers}" />
             </GridView>
          </ListView.View>
       </ListView>

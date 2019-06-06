@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace SISCParser
 {
@@ -46,6 +47,17 @@ namespace SISCParser
 
       public List<Poste> ListeDesPostes;
       public VAJ Vaj { get; set; }
+      public string Paliers
+      {
+         get
+         {
+            StringBuilder sbPaliers = new StringBuilder();
+            foreach (Poste poste in ListeDesPostes)
+               sbPaliers.Append(Enum.GetName(typeof(Palier.Branche), poste.PalierDuPoste.BrancheUnite) + " ");
+            return sbPaliers.ToString();
+         }
+      }
+
 
       public override string ToString()
       {
