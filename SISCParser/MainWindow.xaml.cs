@@ -89,5 +89,19 @@ namespace SISCParser
             LVMembres.Items.Add(entreeMembre);
          }
       }
+
+      private void CtrlCCopyCmdExecuted(object sender, ExecutedRoutedEventArgs e)
+      {
+         var builder = new StringBuilder();
+         foreach (ListViewItem item in LVMembres.SelectedItems)
+            builder.AppendLine(item.ToString());
+
+         Clipboard.SetText(builder.ToString());
+      }
+
+      private void CtrlCCopyCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
+      {
+         e.CanExecute = true;
+      }
    }
 }

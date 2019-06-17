@@ -4,25 +4,23 @@
    {
       public enum Branche
       {
-         Castors,        //a
-         Hirondelles,    //b
-         Louveteaux,     //c
-         Exploratrices,  //d
-         Eclaireurs,     //e
-         Intrepides,     //f
-         Pionniers,      //g
-         Routiers,       //h
-         Aventuriers,    //i
-         Louveteaux2012  //j
+         Aucune = -1,
+         Castors = 'a',        //a
+         Hirondelles = 'b',    //b
+         Louveteaux = 'c',     //c
+         Exploratrices = 'd',  //d
+         Eclaireurs = 'e',     //e
+         Intrepides = 'f',     //f
+         Pionniers = 'g',      //g
+         Routiers = 'h',       //h
+         Aventuriers = 'i',    //i
+         Louveteaux2012 = 'j'  //j
       }
 
       public Palier(string palier)
       {
+         BrancheUnite = Branche.Aucune;
          string[] splPalier = palier.Split('-');
-         if (splPalier.Length > 0)
-            District = splPalier[0];
-         if (splPalier.Length > 1)
-            Groupe = splPalier[1];
          if (splPalier.Length > 2)
          {
             Unite = splPalier[2];
@@ -38,8 +36,16 @@
                case 'h': BrancheUnite = Branche.Routiers;       break;
                case 'i': BrancheUnite = Branche.Aventuriers;    break;
                case 'j': BrancheUnite = Branche.Louveteaux2012; break;
-               default:                                         break;
+               default:  BrancheUnite = Branche.Aucune;         break;
             }
+         }
+         if (splPalier.Length > 1)
+         {
+            Groupe = splPalier[1];
+         }
+         if (splPalier.Length > 0)
+         {
+            District = splPalier[0];
          }
       }
       public string District { get; set; }

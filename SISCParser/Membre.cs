@@ -40,8 +40,12 @@ namespace SISCParser
       public string Prenom { get; set; }
       public string Sexe { get; set; }
       public DateTime Naissance { get; set; }
-      public string NaissanceStr {
-         get { return Naissance.ToString("yyyy-MM-dd"); }
+      public string NaissanceStr
+      {
+         get
+         {
+            return Naissance.ToString("yyyy-MM-dd");
+         }
       }
       public DateTime Inscription { get; set; }
 
@@ -52,12 +56,48 @@ namespace SISCParser
          get
          {
             StringBuilder sbPaliers = new StringBuilder();
+            int nbPoste = ListeDesPostes.Where(p => p.Actif()).Count();
+
+            sbPaliers.Append("[" + nbPoste + "]");
+
             foreach (Poste poste in ListeDesPostes)
-               sbPaliers.Append(Enum.GetName(typeof(Palier.Branche), poste.PalierDuPoste.BrancheUnite) + " ");
+            {
+               if (poste.Actif())
+               {
+                  if (poste.PalierDuPoste.BrancheUnite != Palier.Branche.Aucune)
+                  {
+                     sbPaliers.Append(Enum.GetName(typeof(Palier.Branche), poste.PalierDuPoste.BrancheUnite) + " ");
+                  }
+                  // TODO identifier les postes autres que dans une branche
+               }
+            }
             return sbPaliers.ToString();
          }
       }
 
+      public string Postes
+      {
+         get
+         {
+            StringBuilder sbPaliers = new StringBuilder();
+            int nbPoste = ListeDesPostes.Where(p => p.Actif()).Count();
+
+            sbPaliers.Append("[" + nbPoste + "]");
+
+            foreach (Poste poste in ListeDesPostes)
+            {
+               if (poste.Actif())
+               {
+                  if (poste.PalierDuPoste.BrancheUnite != Palier.Branche.Aucune)
+                  {
+                     sbPaliers.Append(poste.FonctionDuPoste.TitreFonction() + " " + Enum.GetName(typeof(Palier.Branche), poste.PalierDuPoste.BrancheUnite) + " ");
+                  }
+                  // TODO identifier les postes autres que dans une branche
+               }
+            }
+            return sbPaliers.ToString();
+         }
+      }
 
       public override string ToString()
       {
