@@ -8,13 +8,26 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
    <DockPanel Margin="10">
-      <WrapPanel Margin="0,0,-2,10" DockPanel.Dock="Top">
-         <Label Content="Fichier des membres:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch"/>
-         <TextBox Name="txtMembreCSV" Width="200" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0"/>
-         <Button Name="btnOpenFile" Click="btnOpenFile_Click" HorizontalAlignment="Right" Margin="0,0,10,0">Open file</Button>
-      </WrapPanel>
-      <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
-         <Button Name="btnParseMembers" Content="Lister les membres" Width="auto" Click="BtnParseMembers_Click"/>
+      <WrapPanel Margin="0,0,0,10" DockPanel.Dock="Top">
+         <Grid x:Name="fileGrid" Margin="0">
+            <Grid.RowDefinitions>
+               <RowDefinition Height="Auto"/>
+               <RowDefinition Height="Auto"/>
+               <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="Auto"/>
+               <ColumnDefinition Width="Auto"/>
+               <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Fichier des membres:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch"/>
+            <TextBox Name="txtMembreCSV" Width="200" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0" Grid.Column="1"/>
+            <Button Name="btnOpenFile" Click="btnOpenFile_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Column="2" Height="20">Open file</Button>
+            <Label Content="Fichier des groupes:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch" Grid.Row="1"/>
+            <TextBox Name="txtGroupeCSV" Width="200" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0" Grid.Row="1" Grid.Column="1"/>
+            <Button Name="btnOpenFileGroupe" Click="btnOpenFile_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="1" Grid.Column="2" Height="20">Open file</Button>
+            <Button x:Name="btnParseMembers" Content="Lister les membres" Width="auto" Click="BtnParseMembers_Click" Height="20" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Grid.Row="2" Margin="0,5" HorizontalAlignment="Left" Grid.Column="1"/>
+         </Grid>
       </WrapPanel>
 
       <Label Content="Liste de membres: &#xD;&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Height="16" Padding="0"/>
@@ -36,6 +49,8 @@
                             DisplayMemberBinding="{Binding Value.NaissanceStr}" />
                <GridViewColumn Header="VAJ"
                             DisplayMemberBinding="{Binding Value.Vaj}" />
+               <GridViewColumn Header="Groupe"
+                            DisplayMemberBinding="{Binding Value.Groupe}" />
                <GridViewColumn Header="Branche"
                             DisplayMemberBinding="{Binding Value.Postes}" />
             </GridView>

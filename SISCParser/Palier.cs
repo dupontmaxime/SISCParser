@@ -20,6 +20,8 @@
       public Palier(string palier)
       {
          BrancheUnite = Branche.Aucune;
+         Groupe = string.Empty;
+         District = string.Empty;
          string[] splPalier = palier.Split('-');
          if (splPalier.Length > 2)
          {

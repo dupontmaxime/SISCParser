@@ -92,10 +92,38 @@ namespace SISCParser
                   {
                      sbPaliers.Append(poste.FonctionDuPoste.TitreFonction() + " " + Enum.GetName(typeof(Palier.Branche), poste.PalierDuPoste.BrancheUnite) + " ");
                   }
+                  else if (poste.PalierDuPoste.Groupe != string.Empty)
+                  {
+                     sbPaliers.Append(poste.FonctionDuPoste.TitreFonction() + " " + poste.PalierDuPoste.Groupe + " ");
+                  }
                   // TODO identifier les postes autres que dans une branche
                }
             }
             return sbPaliers.ToString();
+         }
+      }
+
+      public string[] GroupeArray()
+      {
+         StringBuilder sbPaliers = new StringBuilder();
+         Dictionary<string, int> groupes = new Dictionary<string, int>();
+         foreach (Poste poste in ListeDesPostes)
+         {
+            if (poste.Actif()   &&
+               poste.PalierDuPoste.Groupe != string.Empty   &&
+               !groupes.ContainsKey(poste.PalierDuPoste.Groupe)   )
+            {
+               groupes.Add(poste.PalierDuPoste.Groupe, int.Parse(poste.PalierDuPoste.Groupe));
+            }
+         }
+         return groupes.Keys.ToArray();
+      }
+
+      public string Groupe
+      {
+         get
+         {
+            return string.Join(",", GroupeArray());
          }
       }
 
