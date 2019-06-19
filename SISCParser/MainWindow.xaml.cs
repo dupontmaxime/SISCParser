@@ -24,6 +24,7 @@ namespace SISCParser
    public partial class MainWindow : Window
    {
       public string memberfilename;
+      public string groupefilename;
 
       Dictionary<string, Membre> listeDesMembres = new Dictionary<string, Membre>();
 
@@ -45,6 +46,17 @@ namespace SISCParser
          txtMembreCSV.Text = memberfilename;
       }
 
+      private void btnOpenFileGroupe_Click(object sender, RoutedEventArgs e)
+      {
+         OpenFileDialog openFileDialog = new OpenFileDialog();
+         if (openFileDialog.ShowDialog() == true)
+            groupefilename = openFileDialog.FileName;
+         else
+            groupefilename = null;
+
+         txtGroupeCSV.Text = groupefilename;
+         ParseGroupes(groupefilename);
+      }
       private void BtnParseMembers_Click(object sender, RoutedEventArgs e)
       {
          ParseMembers(memberfilename);
@@ -88,6 +100,54 @@ namespace SISCParser
          {
             LVMembres.Items.Add(entreeMembre);
          }
+      }
+
+      public class IdentifiantGroupe
+      {
+         public string Name { get; set; }
+         public string Value { get; set; }
+      }
+
+      public void ParseGroupes(string filename)
+      {
+         bool bChampLus = false;
+         List<IdentifiantGroupe> listeGroupe = new List<IdentifiantGroupe>();
+         using (TextFieldParser parser = new TextFieldParser(filename, Encoding.Default))
+         {
+            parser.TextFieldType = FieldType.Delimited;
+            parser.SetDelimiters(";");
+            while (!parser.EndOfData)
+            {
+               //init field title
+               Groupe.NomDesChamps(new string[] { "a", "b", "numero", "nom", "identifiant", "f",
+                                                  "g", "h", "i", "j", "k", "l",
+                                                  "m", "n", "o", "p", "q", "r",
+                                                  "s", "t", "u", "v", "w"});
+               bChampLus = true;
+
+               //Process row
+               string[] fields = parser.ReadFields();
+               if (!bChampLus)
+               {
+                  //Groupe.NomDesChamps(new string[] { "a", "b", "numero", "nom", "identifiant", "f",
+                  //                                    "g", "h", "i", "j", "k", "l",
+                  //                                    "m", "n", "o", "p", "q", "r",
+                  //                                    "s", "t", "u", "v", "w"});
+                  //bChampLus = true;
+               }
+               else
+               {
+                  string nom = fields.ElementAt(Membre.GetFieldIndex("nom"));
+                  string identifiant = fields.ElementAt(Membre.GetFieldIndex("identifiant"));
+
+                  listeGroupe.Add(new IdentifiantGroupe() { Name = nom, Value = identifiant });
+               }
+            }
+         }
+
+         comboGroupe.ItemsSource = listeGroupe;
+         comboGroupe.DisplayMemberPath = "Name";
+         comboGroupe.SelectedValuePath = "Value";
       }
 
       private void CtrlCCopyCmdExecuted(object sender, ExecutedRoutedEventArgs e)

@@ -56,6 +56,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="EntreeNommee.cs" />
+    <Compile Include="Groupe.cs" />
     <Compile Include="Palier.cs" />
     <Compile Include="Fonction.cs" />
     <Compile Include="VAJ.cs" />

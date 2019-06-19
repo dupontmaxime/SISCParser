@@ -5,9 +5,8 @@ using System.Text;
 
 namespace SISCParser
 {
-   internal class Membre
+   internal class Membre : EntreeNommee
    {
-      public static List<string> nomDesChamps { get;  set; }
       public Membre()
       {
          ListeDesPostes = new List<Poste>();
@@ -25,7 +24,6 @@ namespace SISCParser
          AjoutePoste(fields);
       }
 
-      public static int GetFieldIndex(string fieldName) => nomDesChamps.FindIndex(x => x.ToLower() == fieldName.ToLower());
 
       internal void AjoutePoste(string[] fields)
       {

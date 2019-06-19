@@ -25,13 +25,16 @@
             <Button Name="btnOpenFile" Click="btnOpenFile_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Column="2" Height="20">Open file</Button>
             <Label Content="Fichier des groupes:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch" Grid.Row="1"/>
             <TextBox Name="txtGroupeCSV" Width="200" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0" Grid.Row="1" Grid.Column="1"/>
-            <Button Name="btnOpenFileGroupe" Click="btnOpenFile_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="1" Grid.Column="2" Height="20">Open file</Button>
+            <Button Name="btnOpenFileGroupe" Click="btnOpenFileGroupe_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="1" Grid.Column="2" Height="20">Open file</Button>
             <Button x:Name="btnParseMembers" Content="Lister les membres" Width="auto" Click="BtnParseMembers_Click" Height="20" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Grid.Row="2" Margin="0,5" HorizontalAlignment="Left" Grid.Column="1"/>
          </Grid>
       </WrapPanel>
 
-      <Label Content="Liste de membres: &#xD;&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Height="16" Padding="0"/>
-      <!--<TextBox Name="txtEditor" VerticalScrollBarVisibility="Auto"/>-->
+      <StackPanel Orientation="Vertical">
+         <Label Content="Liste de membres: &#xD;&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Height="16" Padding="0"/>
+         <ComboBox Name="comboGroupe" Height="auto" VerticalAlignment="Top" Width="120"/>
+         <!--<TextBox Name="txtEditor" VerticalScrollBarVisibility="Auto"/>-->
+      </StackPanel>
 
       <ListView Name="LVMembres">
          <ListView.CommandBindings>
