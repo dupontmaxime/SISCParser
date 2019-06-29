@@ -14,6 +14,7 @@ namespace SISCParser
 
       public Membre(string[] fields) : this()
       {
+         CodePermanent = fields.ElementAt(GetFieldIndex("code_permanent"));
          Prenom = fields.ElementAt(GetFieldIndex("prenom"));
          Nom = fields.ElementAt(GetFieldIndex("nom"));
          Naissance = DateTime.ParseExact(fields.ElementAt(GetFieldIndex("naissance")), "yyyyMMdd", null);
@@ -24,7 +25,6 @@ namespace SISCParser
          AjoutePoste(fields);
       }
 
-
       internal void AjoutePoste(string[] fields)
       {
          ListeDesPostes.Add(new Poste(fields.ElementAt(GetFieldIndex("poste")),
@@ -34,6 +34,7 @@ namespace SISCParser
                                       fields.ElementAt(GetFieldIndex("fin"))));
       }
 
+      public string CodePermanent { get; set; }
       public string Nom { get; set; }
       public string Prenom { get; set; }
       public string Sexe { get; set; }
@@ -48,6 +49,15 @@ namespace SISCParser
       public DateTime Inscription { get; set; }
 
       public List<Poste> ListeDesPostes;
+      public bool PosteDansGroupe(string numeroDeGroupe, bool actif=true)
+      {
+         Palier recherchePalier = new Palier(numeroDeGroupe);
+         if (recherchePalier.Groupe == "000" && ListeDesPostes.Exists(p => p.Actif() == actif))
+            return true;
+         if (ListeDesPostes.Exists(p => (p.PalierDuPoste.Groupe == recherchePalier.Groupe) && (p.Actif()==actif)))
+            return true;
+         return false;
+      }
       public VAJ Vaj { get; set; }
       public string Paliers
       {

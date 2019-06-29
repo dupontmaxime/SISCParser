@@ -114,6 +114,8 @@ namespace SISCParser
          List<IdentifiantGroupe> listeGroupe = new List<IdentifiantGroupe>();
          using (TextFieldParser parser = new TextFieldParser(filename, Encoding.Default))
          {
+            listeGroupe.Add(new IdentifiantGroupe() { Name = "Tous", Value = "d10-000" });
+
             parser.TextFieldType = FieldType.Delimited;
             parser.SetDelimiters(";");
             while (!parser.EndOfData)
@@ -162,6 +164,17 @@ namespace SISCParser
       private void CtrlCCopyCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
       {
          e.CanExecute = true;
+      }
+
+      private void ComboGroupe_SelectionChanged(object sender, SelectionChangedEventArgs e)
+      {
+         List<KeyValuePair<string, Membre>> membresDuGroupe = listeDesMembres.Where(m => m.Value.PosteDansGroupe(comboGroupe.SelectedValue.ToString())).ToList();
+
+         LVMembres.Items.Clear();
+         foreach (KeyValuePair<string, Membre> membre in membresDuGroupe)
+         {
+            LVMembres.Items.Add(membre);
+         }
       }
    }
 }

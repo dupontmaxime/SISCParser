@@ -32,7 +32,7 @@
 
       <StackPanel Orientation="Vertical">
          <Label Content="Liste de membres: &#xD;&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Height="16" Padding="0"/>
-         <ComboBox Name="comboGroupe" Height="auto" VerticalAlignment="Top" Width="120"/>
+         <ComboBox Name="comboGroupe" Height="auto" VerticalAlignment="Top" Width="120" SelectionChanged="ComboGroupe_SelectionChanged"/>
          <!--<TextBox Name="txtEditor" VerticalScrollBarVisibility="Auto"/>-->
       </StackPanel>
 
