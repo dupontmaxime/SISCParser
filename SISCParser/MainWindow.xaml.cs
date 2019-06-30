@@ -27,6 +27,7 @@ namespace SISCParser
       public string groupefilename;
 
       Dictionary<string, Membre> listeDesMembres = new Dictionary<string, Membre>();
+      List<KeyValuePair<string, Membre>> membresDuGroupe;
 
       public MainWindow()
       {
@@ -96,10 +97,12 @@ namespace SISCParser
             }
          }
 
+         membresDuGroupe = listeDesMembres.ToList();
          foreach (KeyValuePair<string, Membre> entreeMembre in listeDesMembres)
          {
             LVMembres.Items.Add(entreeMembre);
          }
+         UpdateGroupeInfo();
       }
 
       public class IdentifiantGroupe
@@ -168,13 +171,30 @@ namespace SISCParser
 
       private void ComboGroupe_SelectionChanged(object sender, SelectionChangedEventArgs e)
       {
-         List<KeyValuePair<string, Membre>> membresDuGroupe = listeDesMembres.Where(m => m.Value.PosteDansGroupe(comboGroupe.SelectedValue.ToString())).ToList();
+         membresDuGroupe = listeDesMembres.Where(m => m.Value.PosteDansGroupe(comboGroupe.SelectedValue.ToString())).ToList();
 
          LVMembres.Items.Clear();
          foreach (KeyValuePair<string, Membre> membre in membresDuGroupe)
          {
             LVMembres.Items.Add(membre);
          }
+         UpdateGroupeInfo();
+      }
+
+      public void UpdateGroupeInfo()
+      {
+         StringBuilder txtGroupeInfo = new StringBuilder();
+         int iDoubleChapeauSup = membresDuGroupe.Where(m => m.Value.NbPostesSup > 1).Count();
+         int iDoubleChapeau = membresDuGroupe.Where(m => m.Value.NbPostes > 1).Count();
+         int iVAJincomplete = membresDuGroupe.Where(m => (m.Value.Vaj.Statut == VAJ.VAJStatut.NON_REMPLIE) || (m.Value.Vaj.Statut == VAJ.VAJStatut.INCOMPLETE)).Count();
+         int iPrioriteJeunesse = membresDuGroupe.Where(m => m.Value.PrioriteJeunesse == null).Count();
+
+         txtGroupeInfo.Append("Memmbre avec plus d'un poste de supervision: " + iDoubleChapeauSup.ToString() + "\n");
+         txtGroupeInfo.Append("Memmbre avec plus d'un poste: " + iDoubleChapeau.ToString() + "\n");
+         txtGroupeInfo.Append("Memmbre sans VAJ completée: " + iVAJincomplete.ToString() + "\n");
+         txtGroupeInfo.Append("Memmbre n'ayant pas completé \"Priorité Jeunesse\": " + iPrioriteJeunesse.ToString() + "\n");
+
+         GroupeInfo.Text = txtGroupeInfo.ToString();
       }
    }
 }

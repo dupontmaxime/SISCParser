@@ -21,6 +21,12 @@ namespace SISCParser
          Vaj = new VAJ(fields.ElementAt(GetFieldIndex("vaj_remplie")),
                        fields.ElementAt(GetFieldIndex("vaj_effectuee")),
                        fields.ElementAt(GetFieldIndex("vaj_autorite")));
+         string cpjDate = fields.ElementAt(GetFieldIndex("cpj_date"));
+         PrioriteJeunesse = null;
+         if(cpjDate.Trim().Length > 0)
+         {
+            PrioriteJeunesse = DateTime.ParseExact(cpjDate, "yyyyMMdd", null);
+         }
          ListeDesPostes.Clear();
          AjoutePoste(fields);
       }
@@ -47,6 +53,8 @@ namespace SISCParser
          }
       }
       public DateTime Inscription { get; set; }
+      public VAJ Vaj { get; set; }
+      public DateTime? PrioriteJeunesse { get; set; }
 
       public List<Poste> ListeDesPostes;
       public bool PosteDansGroupe(string numeroDeGroupe, bool actif=true)
@@ -58,7 +66,6 @@ namespace SISCParser
             return true;
          return false;
       }
-      public VAJ Vaj { get; set; }
       public string Paliers
       {
          get
@@ -88,9 +95,8 @@ namespace SISCParser
          get
          {
             StringBuilder sbPaliers = new StringBuilder();
-            int nbPoste = ListeDesPostes.Where(p => p.Actif()).Count();
 
-            sbPaliers.Append("[" + nbPoste + "]");
+            sbPaliers.Append("[" + NbPostes + "]");
 
             foreach (Poste poste in ListeDesPostes)
             {
@@ -109,6 +115,26 @@ namespace SISCParser
             }
             return sbPaliers.ToString();
          }
+      }
+
+      public int NbPostes
+      {
+         get { return ListeDesPostes.Where(p => p.Actif()).Count(); }
+      }
+
+      public int NbPostesSup
+      {
+         get { return ListeDesPostes.Where(p => p.Actif() && p.FonctionDuPoste.EstSuperviseur()).Count(); }
+      }
+
+      public string NbPostesStr
+      {
+         get { return NbPostesSup.ToString() + "/" + NbPostes.ToString(); }
+      }
+
+      public string CPJ
+      {
+         get { return PrioriteJeunesse?.ToString("dd-MM-yyyy"); }
       }
 
       public string[] GroupeArray()
