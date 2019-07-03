@@ -3,6 +3,12 @@ using System.Linq;
 
 namespace SISCParser
 {
+   public class IdentifiantGroupe
+   {
+      public string Name { get; set; }
+      public string Value { get; set; }
+   }
+
    internal class Groupe : EntreeNommee
    {
       public string Numero { get; set; }

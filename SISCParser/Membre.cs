@@ -27,6 +27,14 @@ namespace SISCParser
          {
             PrioriteJeunesse = DateTime.ParseExact(cpjDate, "yyyyMMdd", null);
          }
+
+         string ccaDate = fields.ElementAt(GetFieldIndex("cca_date"));
+         CodeConduite = null;
+         if(ccaDate.Trim().Length >0)
+         {
+            CodeConduite = DateTime.ParseExact(ccaDate, "yyyyMMdd", null);
+         }
+
          ListeDesPostes.Clear();
          AjoutePoste(fields);
       }
@@ -55,6 +63,7 @@ namespace SISCParser
       public DateTime Inscription { get; set; }
       public VAJ Vaj { get; set; }
       public DateTime? PrioriteJeunesse { get; set; }
+      public DateTime? CodeConduite { get; set; }
 
       public List<Poste> ListeDesPostes;
       public bool PosteDansGroupe(string numeroDeGroupe, bool actif=true)
@@ -135,6 +144,10 @@ namespace SISCParser
       public string CPJ
       {
          get { return PrioriteJeunesse?.ToString("dd-MM-yyyy"); }
+      }
+      public string CCA
+      {
+         get { return CodeConduite?.ToString("dd-MM-yyyy"); }
       }
 
       public string[] GroupeArray()

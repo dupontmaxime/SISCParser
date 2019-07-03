@@ -26,8 +26,10 @@ namespace SISCParser
       public string memberfilename;
       public string groupefilename;
 
+      List<IdentifiantGroupe> listeGroupe = new List<IdentifiantGroupe>();
       Dictionary<string, Membre> listeDesMembres = new Dictionary<string, Membre>();
       List<KeyValuePair<string, Membre>> membresDuGroupe;
+      Dictionary<string, MetriqueGroupe> metriquedesgroupes = new Dictionary<string, MetriqueGroupe>();
 
       public MainWindow()
       {
@@ -102,19 +104,16 @@ namespace SISCParser
          {
             LVMembres.Items.Add(entreeMembre);
          }
-         UpdateGroupeInfo();
-      }
 
-      public class IdentifiantGroupe
-      {
-         public string Name { get; set; }
-         public string Value { get; set; }
+         EvaluerMetriques(listeDesMembres, listeGroupe);
+
+         UpdateGroupeInfo();
       }
 
       public void ParseGroupes(string filename)
       {
          bool bChampLus = false;
-         List<IdentifiantGroupe> listeGroupe = new List<IdentifiantGroupe>();
+         listeGroupe.Clear();
          using (TextFieldParser parser = new TextFieldParser(filename, Encoding.Default))
          {
             listeGroupe.Add(new IdentifiantGroupe() { Name = "Tous", Value = "d10-000" });
@@ -151,6 +150,7 @@ namespace SISCParser
          }
 
          comboGroupe.ItemsSource = listeGroupe;
+         comboGroupe.SelectedIndex = 0;
          comboGroupe.DisplayMemberPath = "Name";
          comboGroupe.SelectedValuePath = "Value";
       }
@@ -171,7 +171,7 @@ namespace SISCParser
 
       private void ComboGroupe_SelectionChanged(object sender, SelectionChangedEventArgs e)
       {
-         membresDuGroupe = listeDesMembres.Where(m => m.Value.PosteDansGroupe(comboGroupe.SelectedValue.ToString())).ToList();
+         membresDuGroupe = GetMembresDuGroupe(listeDesMembres, GetSelectedGroupe());
 
          LVMembres.Items.Clear();
          foreach (KeyValuePair<string, Membre> membre in membresDuGroupe)
@@ -181,18 +181,52 @@ namespace SISCParser
          UpdateGroupeInfo();
       }
 
+      private string GetSelectedGroupe()
+      {
+         try
+         {
+            return comboGroupe.SelectedValue.ToString();
+         }
+         catch(NullReferenceException)
+         {
+            return "";
+         }
+      }
+
+      private List<KeyValuePair<string, Membre>> GetMembresDuGroupe(Dictionary<string, Membre> listeMembres, string selectionGroupe)
+      {
+          return listeMembres.Where(m => m.Value.PosteDansGroupe(selectionGroupe)).ToList();
+      }
+
+      private void EvaluerMetriques(Dictionary<string, Membre> listeMembres, List<IdentifiantGroupe> listeGroupe)
+      {
+         foreach(IdentifiantGroupe groupe in listeGroupe)
+         {
+            List<KeyValuePair<string,Membre>> membresSelection = GetMembresDuGroupe(listeMembres, groupe.Value);
+            if(!metriquedesgroupes.ContainsKey(groupe.Value))
+            {
+               MetriqueGroupe metrique = new MetriqueGroupe(groupe, membresSelection);
+               metriquedesgroupes.Add(groupe.Value, metrique);
+            }
+         }
+      }
+
       public void UpdateGroupeInfo()
       {
          StringBuilder txtGroupeInfo = new StringBuilder();
-         int iDoubleChapeauSup = membresDuGroupe.Where(m => m.Value.NbPostesSup > 1).Count();
-         int iDoubleChapeau = membresDuGroupe.Where(m => m.Value.NbPostes > 1).Count();
-         int iVAJincomplete = membresDuGroupe.Where(m => (m.Value.Vaj.Statut == VAJ.VAJStatut.NON_REMPLIE) || (m.Value.Vaj.Statut == VAJ.VAJStatut.INCOMPLETE)).Count();
-         int iPrioriteJeunesse = membresDuGroupe.Where(m => m.Value.PrioriteJeunesse == null).Count();
-
-         txtGroupeInfo.Append("Memmbre avec plus d'un poste de supervision: " + iDoubleChapeauSup.ToString() + "\n");
-         txtGroupeInfo.Append("Memmbre avec plus d'un poste: " + iDoubleChapeau.ToString() + "\n");
-         txtGroupeInfo.Append("Memmbre sans VAJ completée: " + iVAJincomplete.ToString() + "\n");
-         txtGroupeInfo.Append("Memmbre n'ayant pas completé \"Priorité Jeunesse\": " + iPrioriteJeunesse.ToString() + "\n");
+         try
+         {
+            MetriqueGroupe metrique = metriquedesgroupes[GetSelectedGroupe()];
+            txtGroupeInfo.Append("Memmbre avec plus d'un poste de supervision: " + metrique.MultiplePosteSup.ToString() + "\n");
+            txtGroupeInfo.Append("Memmbre avec plus d'un poste: " + metrique.MultiplePoste.ToString() + "\n");
+            txtGroupeInfo.Append("Memmbre sans VAJ completée: " + metrique.VAJIncomplete.ToString() + "\n");
+            txtGroupeInfo.Append("Memmbre n'ayant pas completé \"Priorité Jeunesse\": " + metrique.PJIncomplete.ToString() + "\n");
+            txtGroupeInfo.Append("Memmbre n'ayant pas signé le Code de conduite: " + metrique.CCIncomplete.ToString() + "\n");
+         }
+         catch (KeyNotFoundException)
+         {
+            txtGroupeInfo.Append("Pas de groupe sélectionné");
+         }
 
          GroupeInfo.Text = txtGroupeInfo.ToString();
       }

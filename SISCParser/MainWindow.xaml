@@ -55,6 +55,8 @@
                             DisplayMemberBinding="{Binding Value.Vaj}" />
                      <GridViewColumn Header="CPJ"
                             DisplayMemberBinding="{Binding Value.CPJ}" />
+                     <GridViewColumn Header="CCA"
+                            DisplayMemberBinding="{Binding Value.CCA}" />
                      <GridViewColumn Header="Postes"
                             DisplayMemberBinding="{Binding Value.NbPostesStr}" />
                      <GridViewColumn Header="Groupe"
