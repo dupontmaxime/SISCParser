@@ -29,7 +29,7 @@ namespace SISCParser
       List<IdentifiantGroupe> listeGroupe = new List<IdentifiantGroupe>();
       Dictionary<string, Membre> listeDesMembres = new Dictionary<string, Membre>();
       List<KeyValuePair<string, Membre>> membresDuGroupe;
-      Dictionary<string, MetriqueGroupe> metriquedesgroupes = new Dictionary<string, MetriqueGroupe>();
+      DictMetriques metriquedesgroupes = new DictMetriques();
 
       public MainWindow()
       {
@@ -209,6 +209,7 @@ namespace SISCParser
                metriquedesgroupes.Add(groupe.Value, metrique);
             }
          }
+         metriquedesgroupes.ClasserMetriques();
       }
 
       public void UpdateGroupeInfo()
@@ -217,11 +218,11 @@ namespace SISCParser
          try
          {
             MetriqueGroupe metrique = metriquedesgroupes[GetSelectedGroupe()];
-            txtGroupeInfo.Append("Memmbre avec plus d'un poste de supervision: " + metrique.MultiplePosteSup.ToString() + "\n");
-            txtGroupeInfo.Append("Memmbre avec plus d'un poste: " + metrique.MultiplePoste.ToString() + "\n");
-            txtGroupeInfo.Append("Memmbre sans VAJ completée: " + metrique.VAJIncomplete.ToString() + "\n");
-            txtGroupeInfo.Append("Memmbre n'ayant pas completé \"Priorité Jeunesse\": " + metrique.PJIncomplete.ToString() + "\n");
-            txtGroupeInfo.Append("Memmbre n'ayant pas signé le Code de conduite: " + metrique.CCIncomplete.ToString() + "\n");
+            txtGroupeInfo.Append("Memmbre avec plus d'un poste de supervision: " + metrique.MultiplePosteSup.Valeur.ToString() + "\n");
+            txtGroupeInfo.Append("Memmbre avec plus d'un poste: " + metrique.MultiplePoste.Valeur.ToString() + "\n");
+            txtGroupeInfo.Append("Memmbre sans VAJ completée: " + metrique.VAJIncomplete.Valeur.ToString() + "\n");
+            txtGroupeInfo.Append("Memmbre n'ayant pas completé \"Priorité Jeunesse\": " + metrique.PJIncomplete.Valeur.ToString() + "\n");
+            txtGroupeInfo.Append("Memmbre n'ayant pas signé le Code de conduite: " + metrique.CCIncomplete.Valeur.ToString() + "\n");
          }
          catch (KeyNotFoundException)
          {
