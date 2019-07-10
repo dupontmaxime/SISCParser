@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
+using System.Reflection;
 
 namespace SISCParser
 {
@@ -214,22 +215,23 @@ namespace SISCParser
 
       public void UpdateGroupeInfo()
       {
-         StringBuilder txtGroupeInfo = new StringBuilder();
+         StringBuilder txtGroupeDetail = new StringBuilder();
          try
          {
             MetriqueGroupe metrique = metriquedesgroupes[GetSelectedGroupe()];
-            txtGroupeInfo.Append("Memmbre avec plus d'un poste de supervision: " + metrique.MultiplePosteSup.Valeur.ToString() + "\n");
-            txtGroupeInfo.Append("Memmbre avec plus d'un poste: " + metrique.MultiplePoste.Valeur.ToString() + "\n");
-            txtGroupeInfo.Append("Memmbre sans VAJ completée: " + metrique.VAJIncomplete.Valeur.ToString() + "\n");
-            txtGroupeInfo.Append("Memmbre n'ayant pas completé \"Priorité Jeunesse\": " + metrique.PJIncomplete.Valeur.ToString() + "\n");
-            txtGroupeInfo.Append("Memmbre n'ayant pas signé le Code de conduite: " + metrique.CCIncomplete.Valeur.ToString() + "\n");
+            FieldInfo[] fieldsMetrique = metrique.GetType().GetFields();
+            foreach (FieldInfo fieldMetrique in fieldsMetrique)
+            {
+               ValeurMetrique fieldValue = (ValeurMetrique)fieldMetrique.GetValue(metrique);
+               txtGroupeDetail.Append(fieldValue.Nom + ": " + fieldValue.Valeur + " (" + fieldValue.Rang + " e)\n");
+            }
          }
          catch (KeyNotFoundException)
          {
-            txtGroupeInfo.Append("Pas de groupe sélectionné");
+            txtGroupeDetail.Append("Pas de groupe sélectionné");
          }
 
-         GroupeInfo.Text = txtGroupeInfo.ToString();
+         GroupeInfo.Text = txtGroupeDetail.ToString();
       }
    }
 }

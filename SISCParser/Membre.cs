@@ -9,7 +9,8 @@ namespace SISCParser
    {
       public Membre()
       {
-         ListeDesPostes = new List<Poste>();
+         ListeDesPostes = new Postes();
+         ListeDesFormations = new Formations();
       }
 
       public Membre(string[] fields) : this()
@@ -36,17 +37,12 @@ namespace SISCParser
          }
 
          ListeDesPostes.Clear();
-         AjoutePoste(fields);
+         ListeDesPostes.AjoutePoste(fields);
+
+         ListeDesFormations.RempliListeDeFormations(fields.ElementAt(GetFieldIndex("modules_reussis")));
       }
 
-      internal void AjoutePoste(string[] fields)
-      {
-         ListeDesPostes.Add(new Poste(fields.ElementAt(GetFieldIndex("poste")),
-                                      fields.ElementAt(GetFieldIndex("palier")),
-                                      fields.ElementAt(GetFieldIndex("fonction")),
-                                      fields.ElementAt(GetFieldIndex("debut")),
-                                      fields.ElementAt(GetFieldIndex("fin"))));
-      }
+      public void AjoutePoste(string[] fields) => ListeDesPostes.AjoutePoste(fields);
 
       public string CodePermanent { get; set; }
       public string Nom { get; set; }
@@ -65,7 +61,7 @@ namespace SISCParser
       public DateTime? PrioriteJeunesse { get; set; }
       public DateTime? CodeConduite { get; set; }
 
-      public List<Poste> ListeDesPostes;
+      public Postes ListeDesPostes;
       public bool PosteDansGroupe(string numeroDeGroupe, bool actif=true)
       {
          Palier recherchePalier = new Palier(numeroDeGroupe);
@@ -99,7 +95,9 @@ namespace SISCParser
          }
       }
 
-      public string Postes
+      public Formations ListeDesFormations;
+
+      public string TitrePostes
       {
          get
          {

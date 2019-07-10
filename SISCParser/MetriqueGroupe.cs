@@ -27,12 +27,17 @@ namespace SISCParser
 
       private void OrdonnerMetrique(string stringMetrique)
       {
-         List<KeyValuePair<string, MetriqueGroupe>> rangMultiplePosteSup;
+         List<KeyValuePair<string, MetriqueGroupe>> valMetriqueOrdonnee;
 
-         rangMultiplePosteSup = this.OrderBy(m => ((ValeurMetrique)m.Value.GetType().GetField(stringMetrique).GetValue(m.Value)).Valeur).ToList();
+         bool inverse = ((ValeurMetrique)this.First().Value.GetType().GetField(stringMetrique).GetValue(this.First().Value)).Inverse;
+
+         valMetriqueOrdonnee = this.OrderBy(m => ((ValeurMetrique)m.Value.GetType().GetField(stringMetrique).GetValue(m.Value)).Valeur).ToList();
+         valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.IdGroupe.Value != "d10-000").ToList();
+         if (inverse)
+            valMetriqueOrdonnee.Reverse();
          int lastIndex = 0;
          int lastValue = -1;
-         foreach (KeyValuePair<string, MetriqueGroupe> rang in rangMultiplePosteSup)
+         foreach (KeyValuePair<string, MetriqueGroupe> rang in valMetriqueOrdonnee)
          {
             int curMetrique = ((ValeurMetrique)rang.Value.GetType().GetField(stringMetrique).GetValue(rang.Value)).Valeur;
             if (curMetrique != lastValue)
@@ -59,15 +64,21 @@ namespace SISCParser
 
       private void OrdonnerMetriquePerCapita(string stringMetrique)
       {
-         List<KeyValuePair<string, MetriqueGroupe>> rangMultiplePosteSup;
+         List<KeyValuePair<string, MetriqueGroupe>> valMetriqueOrdonnee;
 
-         rangMultiplePosteSup = this.OrderBy(m => m.Value.PerCapita((ValeurMetrique)m.Value.GetType().GetField(stringMetrique).GetValue(m.Value))).ToList();
+         bool inverse = ((ValeurMetrique)this.First().Value.GetType().GetField(stringMetrique).GetValue(this.First().Value)).Inverse;
+
+         valMetriqueOrdonnee = this.OrderBy(m => m.Value.PerCapita((ValeurMetrique)m.Value.GetType().GetField(stringMetrique).GetValue(m.Value))).ToList();
+         valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.IdGroupe.Value != "d10-000").ToList();
+         if (inverse)
+            valMetriqueOrdonnee.Reverse();
+
          int lastIndex = 0;
          double lastValue = Double.MinValue;
-         foreach (KeyValuePair<string, MetriqueGroupe> rang in rangMultiplePosteSup)
+         foreach (KeyValuePair<string, MetriqueGroupe> rang in valMetriqueOrdonnee)
          {
             double metriquePerCapita = rang.Value.PerCapita((ValeurMetrique)rang.Value.GetType().GetField(stringMetrique).GetValue(rang.Value));
-            if (metriquePerCapita > lastValue)
+            if (metriquePerCapita != lastValue)
             {
                lastValue = metriquePerCapita;
                lastIndex += 1;
@@ -79,21 +90,28 @@ namespace SISCParser
 
    class ValeurMetrique
    {
+      public ValeurMetrique(string nom, bool inverse=false)
+      {
+         Nom = nom;
+         Inverse = inverse;
+      }
+      public string Nom { get; set; }
       public int Valeur { get; set; }
       public int Rang { get; set; }
       public int RangPerCapita { get; set; }
+      public bool Inverse { get; set; }
    }
 
    class MetriqueGroupe
    {
       public MetriqueGroupe(IdentifiantGroupe groupe, List<KeyValuePair<string, Membre>> membres)
       {
-         AnimateurActif = new ValeurMetrique();
-         MultiplePosteSup = new ValeurMetrique();
-         MultiplePoste = new ValeurMetrique();
-         VAJIncomplete = new ValeurMetrique();
-         PJIncomplete = new ValeurMetrique();
-         CCIncomplete = new ValeurMetrique();
+         AnimateurActif = new ValeurMetrique("Animateurs Actifs", true);
+         MultiplePosteSup = new ValeurMetrique("Membres avec plusieurs postes de supervision");
+         MultiplePoste = new ValeurMetrique("Membres avec plusieurs postes");
+         VAJIncomplete = new ValeurMetrique("VAJ incomplète");
+         PJIncomplete = new ValeurMetrique("Priorité Jeunesse incomplète");
+         CCIncomplete = new ValeurMetrique("Code de conduite incomplet");
 
          EvaluerGroupe(groupe, membres);
       }

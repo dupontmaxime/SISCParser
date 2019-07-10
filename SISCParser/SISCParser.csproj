@@ -56,6 +56,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Formations.cs" />
     <Compile Include="MetriqueGroupe.cs" />
     <Compile Include="EntreeNommee.cs" />
     <Compile Include="Groupe.cs" />
