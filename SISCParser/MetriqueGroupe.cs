@@ -90,15 +90,17 @@ namespace SISCParser
 
    class ValeurMetrique
    {
-      public ValeurMetrique(string nom, bool inverse=false)
+      public ValeurMetrique(string nom, bool absolu=false, bool inverse=false)
       {
          Nom = nom;
+         Absolu = absolu;
          Inverse = inverse;
       }
       public string Nom { get; set; }
       public int Valeur { get; set; }
       public int Rang { get; set; }
       public int RangPerCapita { get; set; }
+      public bool Absolu { get; set; }
       public bool Inverse { get; set; }
    }
 
@@ -106,7 +108,7 @@ namespace SISCParser
    {
       public MetriqueGroupe(IdentifiantGroupe groupe, List<KeyValuePair<string, Membre>> membres)
       {
-         AnimateurActif = new ValeurMetrique("Animateurs Actifs", true);
+         AnimateurActif = new ValeurMetrique("Animateurs Actifs", true, true);
          MultiplePosteSup = new ValeurMetrique("Membres avec plusieurs postes de supervision");
          MultiplePoste = new ValeurMetrique("Membres avec plusieurs postes");
          VAJIncomplete = new ValeurMetrique("VAJ incomplète");
@@ -126,7 +128,10 @@ namespace SISCParser
 
       public double PerCapita(ValeurMetrique valeurMetrique)
       {
-         return valeurMetrique.Valeur / (double)AnimateurActif.Valeur;
+         if (valeurMetrique.Absolu)
+            return valeurMetrique.Valeur;
+         else
+            return valeurMetrique.Valeur / (double)AnimateurActif.Valeur;
       }
 
       public void EvaluerGroupe(IdentifiantGroupe groupe, List<KeyValuePair<string, Membre>> membres)
