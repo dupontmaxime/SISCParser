@@ -14,6 +14,7 @@
                <RowDefinition Height="Auto"/>
                <RowDefinition Height="Auto"/>
                <RowDefinition Height="Auto"/>
+               <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                <ColumnDefinition Width="Auto"/>
@@ -22,11 +23,14 @@
             </Grid.ColumnDefinitions>
             <Label Content="Fichier des membres:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch"/>
             <TextBox Name="txtMembreCSV" Width="300" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0" Grid.Column="1"/>
-            <Button Name="btnOpenFile" Click="btnOpenFile_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Column="2" Height="20">Open file</Button>
+            <Button Name="btnOpenFile" Click="btnOpenFile_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Column="2" Height="20" Width="60">Open file</Button>
             <Label Content="Fichier des groupes:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch" Grid.Row="1"/>
             <TextBox Name="txtGroupeCSV" Width="300" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0" Grid.Row="1" Grid.Column="1"/>
-            <Button Name="btnOpenFileGroupe" Click="btnOpenFileGroupe_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="1" Grid.Column="2" Height="20">Open file</Button>
-            <Button x:Name="btnParseMembers" Content="Lister les membres" Width="auto" Click="BtnParseMembers_Click" Height="20" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Grid.Row="2" Margin="0,5" HorizontalAlignment="Left" Grid.Column="1"/>
+            <Button Name="btnOpenFileGroupe" Click="btnOpenFileGroupe_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="1" Grid.Column="2" Height="20" Width="60">Open file</Button>
+            <Label Content="Fichier metriques:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch" Grid.Row="2"/>
+            <TextBox Name="txtMetriquesGroupes" Width="300" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0" Grid.Row="2" Grid.Column="1"/>
+            <Button Name="btnOpenFileMetriquesGroupes" Click="BtnOpenFileMetriquesGroupes_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="2" Grid.Column="2" Height="20" Width="60">Select file</Button>
+            <Button x:Name="btnParseMembers" Content="Lister les membres" Width="auto" Click="BtnParseMembers_Click" Height="20" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Grid.Row="3" Margin="0,5" HorizontalAlignment="Left" Grid.Column="1"/>
          </Grid>
          <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>

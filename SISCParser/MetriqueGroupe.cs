@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace SISCParser
 {
@@ -29,9 +32,10 @@ namespace SISCParser
       {
          List<KeyValuePair<string, MetriqueGroupe>> valMetriqueOrdonnee;
 
-         bool inverse = ((ValeurMetrique)this.First().Value.GetType().GetField(stringMetrique).GetValue(this.First().Value)).Inverse;
+         MetriqueGroupe firstMetrique = this.First().Value;
+         bool inverse = ((ValeurMetrique)firstMetrique.GetType().GetProperty(stringMetrique).GetValue(firstMetrique)).Inverse;
 
-         valMetriqueOrdonnee = this.OrderBy(m => ((ValeurMetrique)m.Value.GetType().GetField(stringMetrique).GetValue(m.Value)).Valeur).ToList();
+         valMetriqueOrdonnee = this.OrderBy(m => ((ValeurMetrique)m.Value.GetType().GetProperty(stringMetrique).GetValue(m.Value)).Valeur).ToList();
          valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.IdGroupe.Value != "d10-000").ToList();
          if (inverse)
             valMetriqueOrdonnee.Reverse();
@@ -39,13 +43,13 @@ namespace SISCParser
          int lastValue = -1;
          foreach (KeyValuePair<string, MetriqueGroupe> rang in valMetriqueOrdonnee)
          {
-            int curMetrique = ((ValeurMetrique)rang.Value.GetType().GetField(stringMetrique).GetValue(rang.Value)).Valeur;
+            int curMetrique = ((ValeurMetrique)rang.Value.GetType().GetProperty(stringMetrique).GetValue(rang.Value)).Valeur;
             if (curMetrique != lastValue)
             {
                lastValue = curMetrique;
                lastIndex += 1;
             }
-            ((ValeurMetrique)rang.Value.GetType().GetField(stringMetrique).GetValue(rang.Value)).Rang = lastIndex;
+            ((ValeurMetrique)rang.Value.GetType().GetProperty(stringMetrique).GetValue(rang.Value)).Rang = lastIndex;
          }
       }
 
@@ -66,9 +70,9 @@ namespace SISCParser
       {
          List<KeyValuePair<string, MetriqueGroupe>> valMetriqueOrdonnee;
 
-         bool inverse = ((ValeurMetrique)this.First().Value.GetType().GetField(stringMetrique).GetValue(this.First().Value)).Inverse;
+         bool inverse = ((ValeurMetrique)this.First().Value.GetType().GetProperty(stringMetrique).GetValue(this.First().Value)).Inverse;
 
-         valMetriqueOrdonnee = this.OrderBy(m => m.Value.PerCapita((ValeurMetrique)m.Value.GetType().GetField(stringMetrique).GetValue(m.Value))).ToList();
+         valMetriqueOrdonnee = this.OrderBy(m => m.Value.PerCapita((ValeurMetrique)m.Value.GetType().GetProperty(stringMetrique).GetValue(m.Value))).ToList();
          valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.IdGroupe.Value != "d10-000").ToList();
          if (inverse)
             valMetriqueOrdonnee.Reverse();
@@ -77,13 +81,84 @@ namespace SISCParser
          double lastValue = Double.MinValue;
          foreach (KeyValuePair<string, MetriqueGroupe> rang in valMetriqueOrdonnee)
          {
-            double metriquePerCapita = rang.Value.PerCapita((ValeurMetrique)rang.Value.GetType().GetField(stringMetrique).GetValue(rang.Value));
+            double metriquePerCapita = rang.Value.PerCapita((ValeurMetrique)rang.Value.GetType().GetProperty(stringMetrique).GetValue(rang.Value));
             if (metriquePerCapita != lastValue)
             {
                lastValue = metriquePerCapita;
                lastIndex += 1;
             }
-            ((ValeurMetrique)rang.Value.GetType().GetField(stringMetrique).GetValue(rang.Value)).RangPerCapita = lastIndex;
+            ((ValeurMetrique)rang.Value.GetType().GetProperty(stringMetrique).GetValue(rang.Value)).RangPerCapita = lastIndex;
+         }
+      }
+
+      public void Exporter(string file)
+      {
+         try
+         {
+            using (TextWriter stream = new StreamWriter(file, false, Encoding.UTF8))
+            {
+               if (stream != null)
+               {
+                  int propTitreCount = typeof(MetriqueGroupe).GetProperties().Count();
+                  int iTitreProp = 0;
+                  foreach (PropertyInfo prop in typeof(MetriqueGroupe).GetProperties())
+                  {
+                     if(prop.PropertyType == typeof(IdentifiantGroupe))
+                     {
+                        stream.Write("GroupeName, GroupeID");
+                     }
+                     else if (prop.PropertyType == typeof(ValeurMetrique))
+                     {
+                        string baseName = prop.Name;
+                        stream.Write(baseName+"Valeur, "+baseName+"Rang");
+                     }
+                     iTitreProp++;
+
+                     if (iTitreProp < propTitreCount)
+                     {
+                        stream.Write(", ");
+                     }
+                     else
+                     {
+                        stream.Write("\n");
+                     }
+                  }
+
+
+                  int propCount = typeof(MetriqueGroupe).GetProperties().Count();
+                  foreach (MetriqueGroupe metGroupe in this.Values)
+                  {
+                     int iProp = 0;
+                     foreach (PropertyInfo prop in metGroupe.GetType().GetProperties())
+                     {
+                        if (prop.PropertyType == typeof(IdentifiantGroupe))
+                        {
+                           IdentifiantGroupe idGroupe = (IdentifiantGroupe)prop.GetValue(metGroupe);
+                           stream.Write(idGroupe.Name+", "+idGroupe.Value);
+                        }
+                        else if (prop.PropertyType == typeof(ValeurMetrique))
+                        {
+                           ValeurMetrique valMetrique = (ValeurMetrique)prop.GetValue(metGroupe);
+                           stream.Write(valMetrique.Valeur + ", " + valMetrique.Rang);
+                        }
+                        iProp++;
+
+                        if (iProp < propCount)
+                        {
+                           stream.Write(", ");
+                        }
+                        else
+                        {
+                           stream.Write("\n");
+                        }
+                     }
+                  }
+               }
+            }
+         }
+         catch (ArgumentNullException)
+         {
+            MessageBox.Show("Pas de fichier choisi pour la sauvegarde", "Pas de fichier choisi", MessageBoxButton.OK, MessageBoxImage.Warning);
          }
       }
    }
@@ -119,12 +194,12 @@ namespace SISCParser
       }
 
       public IdentifiantGroupe IdGroupe { get; set; }
-      public ValeurMetrique AnimateurActif;
-      public ValeurMetrique MultiplePosteSup;
-      public ValeurMetrique MultiplePoste;
-      public ValeurMetrique VAJIncomplete;
-      public ValeurMetrique PJIncomplete;
-      public ValeurMetrique CCIncomplete;
+      public ValeurMetrique AnimateurActif { get; set; }
+      public ValeurMetrique MultiplePosteSup { get; set; }
+      public ValeurMetrique MultiplePoste { get; set; }
+      public ValeurMetrique VAJIncomplete { get; set; }
+      public ValeurMetrique PJIncomplete { get; set; }
+      public ValeurMetrique CCIncomplete { get; set; }
 
       public double PerCapita(ValeurMetrique valeurMetrique)
       {

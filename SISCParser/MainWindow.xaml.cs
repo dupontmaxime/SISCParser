@@ -26,6 +26,7 @@ namespace SISCParser
    {
       public string memberfilename;
       public string groupefilename;
+      public string metriquefilename;
 
       List<IdentifiantGroupe> listeGroupe = new List<IdentifiantGroupe>();
       Dictionary<string, Membre> listeDesMembres = new Dictionary<string, Membre>();
@@ -107,6 +108,8 @@ namespace SISCParser
          }
 
          EvaluerMetriques(listeDesMembres, listeGroupe);
+
+         metriquedesgroupes.Exporter(metriquefilename);
 
          UpdateGroupeInfo();
       }
@@ -232,6 +235,20 @@ namespace SISCParser
          }
 
          GroupeInfo.Text = txtGroupeDetail.ToString();
+      }
+
+      private void BtnOpenFileMetriquesGroupes_Click(object sender, RoutedEventArgs e)
+      {
+         SaveFileDialog saveFileDialog = new SaveFileDialog();
+         saveFileDialog.DefaultExt = ".csv";
+         saveFileDialog.Filter = "CSV|*.csv";
+         saveFileDialog.Title = "Choisir un fichier de metrique";
+         if (saveFileDialog.ShowDialog() == true)
+            metriquefilename = saveFileDialog.FileName;
+         else
+            metriquefilename = null;
+
+         txtMetriquesGroupes.Text = metriquefilename;
       }
    }
 }
