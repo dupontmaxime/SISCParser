@@ -222,11 +222,16 @@ namespace SISCParser
          try
          {
             MetriqueGroupe metrique = metriquedesgroupes[GetSelectedGroupe()];
-            FieldInfo[] fieldsMetrique = metrique.GetType().GetFields();
-            foreach (FieldInfo fieldMetrique in fieldsMetrique)
+            PropertyInfo[] fieldsMetrique = metrique.GetType().GetProperties();
+            foreach (PropertyInfo fieldMetrique in fieldsMetrique)
             {
-               ValeurMetrique fieldValue = (ValeurMetrique)fieldMetrique.GetValue(metrique);
-               txtGroupeDetail.Append(fieldValue.Nom + ": " + fieldValue.Valeur + " (" + fieldValue.Rang + " e)\n");
+               if (fieldMetrique.PropertyType == typeof(ValeurMetrique))
+               {
+                  ValeurMetrique fieldValue = (ValeurMetrique)fieldMetrique.GetValue(metrique);
+                  txtGroupeDetail.Append(fieldValue.Nom + ": " + fieldValue.Valeur + " (" + fieldValue.Rang + " e)\n");
+               }
+               else
+                  continue;
             }
          }
          catch (KeyNotFoundException)
