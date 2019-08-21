@@ -73,6 +73,8 @@
                             DisplayMemberBinding="{Binding Value.Groupe}" />
                      <GridViewColumn Header="Branche"
                             DisplayMemberBinding="{Binding Value.TitrePostes}" />
+                     <GridViewColumn Header="Secourisme"
+                            DisplayMemberBinding="{Binding Value.Secouriste}" />
                   </GridView>
                </ListView.View>
             </ListView>

@@ -6,30 +6,8 @@ using System.Threading.Tasks;
 
 namespace SISCParser
 {
-   class Formations : Dictionary<String, DateTime>
+   class Formations : ListeChamps
    {
-      public Formations()
-      {
-      }
-
-      public Formations(string field)
-      {
-         RempliListeDeFormations(field);
-      }
-
-      public void RempliListeDeFormations(string field)
-      {
-         Clear();
-         string[] arrayFormations = field.Split(' ');
-         foreach (string formation in arrayFormations)
-         {
-            if (!ContainsKey(formation))
-            {
-               Add(formation, DateTime.MinValue);
-            }
-         }
-      }
-
       public bool BaseComplete()
       {
          if (ContainsKey("DPF0001") &&

@@ -11,6 +11,7 @@ namespace SISCParser
       {
          ListeDesPostes = new Postes();
          ListeDesFormations = new Formations();
+         ListeDesBrevets = new Brevets();
       }
 
       public Membre(string[] fields) : this()
@@ -39,7 +40,9 @@ namespace SISCParser
          ListeDesPostes.Clear();
          ListeDesPostes.AjoutePoste(fields);
 
-         ListeDesFormations.RempliListeDeFormations(fields.ElementAt(GetFieldIndex("modules_reussis")));
+         ListeDesFormations.RemplirListe(fields.ElementAt(GetFieldIndex("modules_reussis")));
+
+         ListeDesBrevets.RemplirListe(fields.ElementAt(GetFieldIndex("brevets")));
       }
 
       public void AjoutePoste(string[] fields) => ListeDesPostes.AjoutePoste(fields);
@@ -97,6 +100,8 @@ namespace SISCParser
 
       public Formations ListeDesFormations;
 
+      public Brevets ListeDesBrevets;
+
       public string TitrePostes
       {
          get
@@ -146,6 +151,14 @@ namespace SISCParser
       public string CCA
       {
          get { return CodeConduite?.ToString("dd-MM-yyyy"); }
+      }
+
+      public string Secouriste
+      {
+         get
+         {
+            return ListeDesBrevets.Secourisme()?"Oui":"";
+         }
       }
 
       public string[] GroupeArray()

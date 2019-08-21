@@ -21,11 +21,31 @@ namespace SISCParser
          OrdonnerMetrique("VAJIncomplete");
          OrdonnerMetrique("PJIncomplete");
          OrdonnerMetrique("CCIncomplete");
+         OrdonnerMetrique("Secouriste");
+         OrdonnerMetrique("ActiviteHiver");
+         OrdonnerMetrique("HiverLourd");
+         OrdonnerMetrique("HiverLeger");
+         OrdonnerMetrique("Gilwell");
+         OrdonnerMetrique("Grege");
+         OrdonnerMetrique("BadgeBois");
+         OrdonnerMetrique("CabestanBleu");
+         OrdonnerMetrique("CabestanVert");
+         OrdonnerMetrique("CabestanViolet");
          OrdonnerMetriquePerCapita("MultiplePoste");
          OrdonnerMetriquePerCapita("MultiplePosteSup");
          OrdonnerMetriquePerCapita("VAJIncomplete");
          OrdonnerMetriquePerCapita("PJIncomplete");
          OrdonnerMetriquePerCapita("CCIncomplete");
+         OrdonnerMetriquePerCapita("Secouriste");
+         OrdonnerMetriquePerCapita("ActiviteHiver");
+         OrdonnerMetriquePerCapita("HiverLourd");
+         OrdonnerMetriquePerCapita("HiverLeger");
+         OrdonnerMetriquePerCapita("Gilwell");
+         OrdonnerMetriquePerCapita("Grege");
+         OrdonnerMetriquePerCapita("BadgeBois");
+         OrdonnerMetriquePerCapita("CabestanBleu");
+         OrdonnerMetriquePerCapita("CabestanVert");
+         OrdonnerMetriquePerCapita("CabestanViolet");
       }
 
       private void OrdonnerMetrique(string stringMetrique)
@@ -189,6 +209,16 @@ namespace SISCParser
          VAJIncomplete = new ValeurMetrique("VAJ incomplète");
          PJIncomplete = new ValeurMetrique("Priorité Jeunesse incomplète");
          CCIncomplete = new ValeurMetrique("Code de conduite incomplet");
+         Secouriste = new ValeurMetrique("Secouriste", false, true);
+         ActiviteHiver = new ValeurMetrique("Activité Hiver", false, true);
+         HiverLourd = new ValeurMetrique("Camping Hiver lourd", false, true);
+         HiverLeger = new ValeurMetrique("Camping Hiver léger", false, true);
+         Gilwell = new ValeurMetrique("Noeud de Gilwell", false, true);
+         Grege = new ValeurMetrique("Foulard Grège", false, true);
+         BadgeBois = new ValeurMetrique("Badge de bois", false, true);
+         CabestanBleu = new ValeurMetrique("Cabestan Bleu", false, true);
+         CabestanVert = new ValeurMetrique("Cabestan Vert", false, true);
+         CabestanViolet = new ValeurMetrique("Cabestan Violet", false, true);
 
          EvaluerGroupe(groupe, membres);
       }
@@ -200,6 +230,16 @@ namespace SISCParser
       public ValeurMetrique VAJIncomplete { get; set; }
       public ValeurMetrique PJIncomplete { get; set; }
       public ValeurMetrique CCIncomplete { get; set; }
+      public ValeurMetrique Secouriste { get; set; }
+      public ValeurMetrique ActiviteHiver { get; set; }
+      public ValeurMetrique HiverLourd { get; set; }
+      public ValeurMetrique HiverLeger { get; set; }
+      public ValeurMetrique Gilwell { get; set; }
+      public ValeurMetrique Grege { get; set; }
+      public ValeurMetrique BadgeBois { get; set; }
+      public ValeurMetrique CabestanBleu { get; set; }
+      public ValeurMetrique CabestanVert { get; set; }
+      public ValeurMetrique CabestanViolet { get; set; }
 
       public double PerCapita(ValeurMetrique valeurMetrique)
       {
@@ -218,6 +258,16 @@ namespace SISCParser
          VAJIncomplete.Valeur = membres.Where(m => (m.Value.Vaj.Statut == VAJ.VAJStatut.NON_REMPLIE) || (m.Value.Vaj.Statut == VAJ.VAJStatut.INCOMPLETE)).Count();
          PJIncomplete.Valeur = membres.Where(m => m.Value.PrioriteJeunesse == null).Count();
          CCIncomplete.Valeur = membres.Where(m => m.Value.CodeConduite == null).Count();
+         Secouriste.Valeur = membres.Where(m => m.Value.ListeDesBrevets.Secourisme()).Count();
+         ActiviteHiver.Valeur = membres.Where(m => m.Value.ListeDesBrevets.ActiviteHiver()).Count();
+         HiverLourd.Valeur = membres.Where(m => m.Value.ListeDesBrevets.HiverLourd()).Count();
+         HiverLeger.Valeur = membres.Where(m => m.Value.ListeDesBrevets.HiverLeger()).Count();
+         Gilwell.Valeur = membres.Where(m => m.Value.ListeDesBrevets.Gilwell()).Count();
+         Grege.Valeur = membres.Where(m => m.Value.ListeDesBrevets.Grege()).Count();
+         BadgeBois.Valeur = membres.Where(m => m.Value.ListeDesBrevets.BadgeBois()).Count();
+         CabestanBleu.Valeur = membres.Where(m => m.Value.ListeDesBrevets.CabestanBleu()).Count();
+         CabestanVert.Valeur = membres.Where(m => m.Value.ListeDesBrevets.CabestanVert()).Count();
+         CabestanViolet.Valeur = membres.Where(m => m.Value.ListeDesBrevets.CabestanViolet()).Count();
       }
 
    }
