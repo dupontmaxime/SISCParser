@@ -118,10 +118,6 @@ namespace SISCParser
                   {
                      sbPaliers.Append(poste.FonctionDuPoste.TitreFonction() + " " + Enum.GetName(typeof(Palier.Branche), poste.PalierDuPoste.BrancheUnite) + " ");
                   }
-                  else if (poste.PalierDuPoste.Groupe != string.Empty)
-                  {
-                     sbPaliers.Append(poste.FonctionDuPoste.TitreFonction() + " " + poste.PalierDuPoste.Groupe + " ");
-                  }
                   // TODO identifier les postes autres que dans une branche
                }
             }
