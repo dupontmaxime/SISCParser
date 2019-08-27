@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
+using System.Reflection;
 
 namespace SISCParser
 {
@@ -24,8 +25,13 @@ namespace SISCParser
    public partial class MainWindow : Window
    {
       public string memberfilename;
+      public string groupefilename;
+      public string metriquefilename;
 
+      List<IdentifiantGroupe> listeGroupe = new List<IdentifiantGroupe>();
       Dictionary<string, Membre> listeDesMembres = new Dictionary<string, Membre>();
+      List<KeyValuePair<string, Membre>> membresDuGroupe;
+      DictMetriques metriquedesgroupes = new DictMetriques();
 
       public MainWindow()
       {
@@ -45,6 +51,17 @@ namespace SISCParser
          txtMembreCSV.Text = memberfilename;
       }
 
+      private void btnOpenFileGroupe_Click(object sender, RoutedEventArgs e)
+      {
+         OpenFileDialog openFileDialog = new OpenFileDialog();
+         if (openFileDialog.ShowDialog() == true)
+            groupefilename = openFileDialog.FileName;
+         else
+            groupefilename = null;
+
+         txtGroupeCSV.Text = groupefilename;
+         ParseGroupes(groupefilename);
+      }
       private void BtnParseMembers_Click(object sender, RoutedEventArgs e)
       {
          ParseMembers(memberfilename);
@@ -84,10 +101,62 @@ namespace SISCParser
             }
          }
 
+         membresDuGroupe = listeDesMembres.ToList();
          foreach (KeyValuePair<string, Membre> entreeMembre in listeDesMembres)
          {
             LVMembres.Items.Add(entreeMembre);
          }
+
+         EvaluerMetriques(listeDesMembres, listeGroupe);
+
+         metriquedesgroupes.Exporter(metriquefilename);
+
+         UpdateGroupeInfo();
+      }
+
+      public void ParseGroupes(string filename)
+      {
+         bool bChampLus = false;
+         listeGroupe.Clear();
+         using (TextFieldParser parser = new TextFieldParser(filename, Encoding.Default))
+         {
+            listeGroupe.Add(new IdentifiantGroupe() { Name = "Tous", Value = "d10-000" });
+
+            parser.TextFieldType = FieldType.Delimited;
+            parser.SetDelimiters(";");
+            while (!parser.EndOfData)
+            {
+               //init field title
+               Groupe.NomDesChamps(new string[] { "a", "b", "numero", "nom", "identifiant", "f",
+                                                  "g", "h", "i", "j", "k", "l",
+                                                  "m", "n", "o", "p", "q", "r",
+                                                  "s", "t", "u", "v", "w"});
+               bChampLus = true;
+
+               //Process row
+               string[] fields = parser.ReadFields();
+               if (!bChampLus)
+               {
+                  //Groupe.NomDesChamps(new string[] { "a", "b", "numero", "nom", "identifiant", "f",
+                  //                                    "g", "h", "i", "j", "k", "l",
+                  //                                    "m", "n", "o", "p", "q", "r",
+                  //                                    "s", "t", "u", "v", "w"});
+                  //bChampLus = true;
+               }
+               else
+               {
+                  string nom = fields.ElementAt(Membre.GetFieldIndex("nom"));
+                  string identifiant = fields.ElementAt(Membre.GetFieldIndex("identifiant"));
+
+                  listeGroupe.Add(new IdentifiantGroupe() { Name = nom, Value = identifiant });
+               }
+            }
+         }
+
+         comboGroupe.ItemsSource = listeGroupe;
+         comboGroupe.SelectedIndex = 0;
+         comboGroupe.DisplayMemberPath = "Name";
+         comboGroupe.SelectedValuePath = "Value";
       }
 
       private void CtrlCCopyCmdExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -102,6 +171,89 @@ namespace SISCParser
       private void CtrlCCopyCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
       {
          e.CanExecute = true;
+      }
+
+      private void ComboGroupe_SelectionChanged(object sender, SelectionChangedEventArgs e)
+      {
+         membresDuGroupe = GetMembresDuGroupe(listeDesMembres, GetSelectedGroupe());
+
+         LVMembres.Items.Clear();
+         foreach (KeyValuePair<string, Membre> membre in membresDuGroupe)
+         {
+            LVMembres.Items.Add(membre);
+         }
+         UpdateGroupeInfo();
+      }
+
+      private string GetSelectedGroupe()
+      {
+         try
+         {
+            return comboGroupe.SelectedValue.ToString();
+         }
+         catch(NullReferenceException)
+         {
+            return "";
+         }
+      }
+
+      private List<KeyValuePair<string, Membre>> GetMembresDuGroupe(Dictionary<string, Membre> listeMembres, string selectionGroupe)
+      {
+          return listeMembres.Where(m => m.Value.PosteDansGroupe(selectionGroupe)).ToList();
+      }
+
+      private void EvaluerMetriques(Dictionary<string, Membre> listeMembres, List<IdentifiantGroupe> listeGroupe)
+      {
+         foreach(IdentifiantGroupe groupe in listeGroupe)
+         {
+            List<KeyValuePair<string,Membre>> membresSelection = GetMembresDuGroupe(listeMembres, groupe.Value);
+            if(!metriquedesgroupes.ContainsKey(groupe.Value))
+            {
+               MetriqueGroupe metrique = new MetriqueGroupe(groupe, membresSelection);
+               metriquedesgroupes.Add(groupe.Value, metrique);
+            }
+         }
+         metriquedesgroupes.ClasserMetriques();
+      }
+
+      public void UpdateGroupeInfo()
+      {
+         StringBuilder txtGroupeDetail = new StringBuilder();
+         try
+         {
+            MetriqueGroupe metrique = metriquedesgroupes[GetSelectedGroupe()];
+            PropertyInfo[] fieldsMetrique = metrique.GetType().GetProperties();
+            foreach (PropertyInfo fieldMetrique in fieldsMetrique)
+            {
+               if (fieldMetrique.PropertyType == typeof(ValeurMetrique))
+               {
+                  ValeurMetrique fieldValue = (ValeurMetrique)fieldMetrique.GetValue(metrique);
+                  txtGroupeDetail.Append(fieldValue.Nom + ": " + fieldValue.Valeur + " (" + fieldValue.Rang + " e)\n");
+               }
+               else
+                  continue;
+            }
+         }
+         catch (KeyNotFoundException)
+         {
+            txtGroupeDetail.Append("Pas de groupe sélectionné");
+         }
+
+         GroupeInfo.Text = txtGroupeDetail.ToString();
+      }
+
+      private void BtnOpenFileMetriquesGroupes_Click(object sender, RoutedEventArgs e)
+      {
+         SaveFileDialog saveFileDialog = new SaveFileDialog();
+         saveFileDialog.DefaultExt = ".csv";
+         saveFileDialog.Filter = "CSV|*.csv";
+         saveFileDialog.Title = "Choisir un fichier de metrique";
+         if (saveFileDialog.ShowDialog() == true)
+            metriquefilename = saveFileDialog.FileName;
+         else
+            metriquefilename = null;
+
+         txtMetriquesGroupes.Text = metriquefilename;
       }
    }
 }

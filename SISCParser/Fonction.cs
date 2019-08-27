@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SISCParser
 {
@@ -63,9 +64,28 @@ namespace SISCParser
          "Vice-président" //VP
       };
 
+      private static List<TypeDeFonction> fonctionSuperviseur = new List<TypeDeFonction>() {
+         TypeDeFonction.AR,
+         TypeDeFonction.CA,
+         TypeDeFonction.CD,
+         TypeDeFonction.CN,
+         TypeDeFonction.GA,
+         TypeDeFonction.GC,
+         TypeDeFonction.GP,
+         TypeDeFonction.PD,
+         TypeDeFonction.PN,
+         TypeDeFonction.PR,
+         TypeDeFonction.VP
+      };
+
       public string TitreFonction()
       {
          return TypeDeFonctionDescription[(int)typeDeFonction];
+      }
+
+      public bool EstSuperviseur()
+      {
+         return fonctionSuperviseur.Contains(typeDeFonction);
       }
 
       public TypeDeFonction typeDeFonction;

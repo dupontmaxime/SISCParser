@@ -6,41 +6,80 @@
         xmlns:local="clr-namespace:SISCParser"
         xmlns:Win32="clr-namespace:Microsoft.Win32;assembly=PresentationFramework"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-   <DockPanel Margin="10">
-      <WrapPanel Margin="0,0,-2,10" DockPanel.Dock="Top">
-         <Label Content="Fichier des membres:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch"/>
-         <TextBox Name="txtMembreCSV" Width="200" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0"/>
-         <Button Name="btnOpenFile" Click="btnOpenFile_Click" HorizontalAlignment="Right" Margin="0,0,10,0">Open file</Button>
-      </WrapPanel>
-      <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
-         <Button Name="btnParseMembers" Content="Lister les membres" Width="auto" Click="BtnParseMembers_Click"/>
-      </WrapPanel>
+        Title="MainWindow" MinHeight="500" MinWidth="700">
+   <DockPanel VerticalAlignment="Stretch">
+      <StackPanel Margin="10,10,10,10" DockPanel.Dock="Top" Orientation="Vertical" VerticalAlignment="Stretch">
+         <Grid x:Name="fileGrid" Margin="0,0,0,10">
+            <Grid.RowDefinitions>
+               <RowDefinition Height="Auto"/>
+               <RowDefinition Height="Auto"/>
+               <RowDefinition Height="Auto"/>
+               <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="Auto"/>
+               <ColumnDefinition Width="Auto"/>
+               <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Fichier des membres:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch"/>
+            <TextBox Name="txtMembreCSV" Width="300" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0" Grid.Column="1"/>
+            <Button Name="btnOpenFile" Click="btnOpenFile_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Column="2" Height="20" Width="60">Open file</Button>
+            <Label Content="Fichier des groupes:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch" Grid.Row="1"/>
+            <TextBox Name="txtGroupeCSV" Width="300" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0" Grid.Row="1" Grid.Column="1"/>
+            <Button Name="btnOpenFileGroupe" Click="btnOpenFileGroupe_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="1" Grid.Column="2" Height="20" Width="60">Open file</Button>
+            <Label Content="Fichier metriques:" HorizontalAlignment="Left" Margin="0,0,10,0" VerticalAlignment="Stretch" Grid.Row="2"/>
+            <TextBox Name="txtMetriquesGroupes" Width="300" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,0,10,0" Grid.Row="2" Grid.Column="1"/>
+            <Button Name="btnOpenFileMetriquesGroupes" Click="BtnOpenFileMetriquesGroupes_Click" HorizontalAlignment="Right" Margin="0,0,10,0" Grid.Row="2" Grid.Column="2" Height="20" Width="60">Select file</Button>
+            <Button x:Name="btnParseMembers" Content="Lister les membres" Width="auto" Click="BtnParseMembers_Click" Height="20" VerticalContentAlignment="Top" HorizontalContentAlignment="Left" Grid.Row="3" Margin="0,5" HorizontalAlignment="Left" Grid.Column="1"/>
+         </Grid>
+         <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="120"/>
+               <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+               <RowDefinition Height="300"/>
+               <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10">
+               <Label Content="Liste de membres: &#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Height="16" Padding="0"/>
+               <ComboBox x:Name="comboGroupe" Height="auto" VerticalAlignment="Top" Width="120" SelectionChanged="ComboGroupe_SelectionChanged"/>
+               <!--<TextBox Name="txtEditor" VerticalScrollBarVisibility="Auto"/>-->
+            </StackPanel>
 
-      <Label Content="Liste de membres: &#xD;&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Height="16" Padding="0"/>
-      <!--<TextBox Name="txtEditor" VerticalScrollBarVisibility="Auto"/>-->
-
-      <ListView Name="LVMembres">
-         <ListView.CommandBindings>
-            <CommandBinding Command="ApplicationCommands.Copy" CanExecute="CtrlCCopyCmdCanExecute" Executed="CtrlCCopyCmdExecuted" />
-         </ListView.CommandBindings>
-         <ListView.View>
-            <GridView>
-               <GridViewColumn Header="Code Permanent"
+            <ListView Name="LVMembres" Grid.Column="1" Grid.Row="0" Margin="10,0,0,10" Width="auto" MinWidth="500" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+               <ListView.CommandBindings>
+                  <CommandBinding Command="ApplicationCommands.Copy" CanExecute="CtrlCCopyCmdCanExecute" Executed="CtrlCCopyCmdExecuted" />
+               </ListView.CommandBindings>
+               <ListView.View>
+                  <GridView>
+                     <GridViewColumn Header="Code Permanent"
                             DisplayMemberBinding="{Binding Key}" />
-               <GridViewColumn Header="Prenom"
+                     <GridViewColumn Header="Prenom"
                             DisplayMemberBinding="{Binding Value.Prenom}" />
-               <GridViewColumn Header="Nom"
+                     <GridViewColumn Header="Nom"
                             DisplayMemberBinding="{Binding Value.Nom}" />
-               <GridViewColumn Header="Naissance"
+                     <GridViewColumn Header="Naissance"
                             DisplayMemberBinding="{Binding Value.NaissanceStr}" />
-               <GridViewColumn Header="VAJ"
+                     <GridViewColumn Header="VAJ"
                             DisplayMemberBinding="{Binding Value.Vaj}" />
-               <GridViewColumn Header="Branche"
-                            DisplayMemberBinding="{Binding Value.Postes}" />
-            </GridView>
-         </ListView.View>
-      </ListView>
+                     <GridViewColumn Header="CPJ"
+                            DisplayMemberBinding="{Binding Value.CPJ}" />
+                     <GridViewColumn Header="CCA"
+                            DisplayMemberBinding="{Binding Value.CCA}" />
+                     <GridViewColumn Header="Postes"
+                            DisplayMemberBinding="{Binding Value.NbPostesStr}" />
+                     <GridViewColumn Header="Groupe"
+                            DisplayMemberBinding="{Binding Value.Groupe}" />
+                     <GridViewColumn Header="Branche"
+                            DisplayMemberBinding="{Binding Value.TitrePostes}" />
+                     <GridViewColumn Header="Secourisme"
+                            DisplayMemberBinding="{Binding Value.Secouriste}" />
+                  </GridView>
+               </ListView.View>
+            </ListView>
+            <TextBlock Name="GroupeInfo" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="auto" TextWrapping="Wrap" Text="" Margin="0,0,0,0"/>
+         </Grid>
+      </StackPanel>
    </DockPanel>
-
 </Window>

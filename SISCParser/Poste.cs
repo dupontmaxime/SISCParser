@@ -1,7 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SISCParser
 {
+   public class Postes: List<Poste>
+   {
+      public void AjoutePoste(string[] fields)
+      {
+         Add(new Poste(fields.ElementAt(Membre.GetFieldIndex("poste")),
+                     fields.ElementAt(Membre.GetFieldIndex("palier")),
+                     fields.ElementAt(Membre.GetFieldIndex("fonction")),
+                     fields.ElementAt(Membre.GetFieldIndex("debut")),
+                     fields.ElementAt(Membre.GetFieldIndex("fin"))));
+      }
+   }
+
    public class Poste
    {
       public Poste(string poste, string palier, string fonction, string debut, string fin)
