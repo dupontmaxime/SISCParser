@@ -31,6 +31,7 @@ namespace SISCParser
          OrdonnerMetrique("CabestanBleu");
          OrdonnerMetrique("CabestanVert");
          OrdonnerMetrique("CabestanViolet");
+         OrdonnerMetrique("FormationBaseCompletee");
          OrdonnerMetriquePerCapita("MultiplePoste");
          OrdonnerMetriquePerCapita("MultiplePosteSup");
          OrdonnerMetriquePerCapita("VAJIncomplete");
@@ -46,6 +47,7 @@ namespace SISCParser
          OrdonnerMetriquePerCapita("CabestanBleu");
          OrdonnerMetriquePerCapita("CabestanVert");
          OrdonnerMetriquePerCapita("CabestanViolet");
+         OrdonnerMetriquePerCapita("FormationBaseCompletee");
       }
 
       private void OrdonnerMetrique(string stringMetrique)
@@ -219,6 +221,7 @@ namespace SISCParser
          CabestanBleu = new ValeurMetrique("Cabestan Bleu", false, true);
          CabestanVert = new ValeurMetrique("Cabestan Vert", false, true);
          CabestanViolet = new ValeurMetrique("Cabestan Violet", false, true);
+         FormationBaseCompletee = new ValeurMetrique("Formation de base complétées", false, true);
 
          EvaluerGroupe(groupe, membres);
       }
@@ -240,6 +243,7 @@ namespace SISCParser
       public ValeurMetrique CabestanBleu { get; set; }
       public ValeurMetrique CabestanVert { get; set; }
       public ValeurMetrique CabestanViolet { get; set; }
+      public ValeurMetrique FormationBaseCompletee { get; set; }
 
       public double PerCapita(ValeurMetrique valeurMetrique)
       {
@@ -268,6 +272,7 @@ namespace SISCParser
          CabestanBleu.Valeur = membres.Where(m => m.Value.ListeDesBrevets.CabestanBleu()).Count();
          CabestanVert.Valeur = membres.Where(m => m.Value.ListeDesBrevets.CabestanVert()).Count();
          CabestanViolet.Valeur = membres.Where(m => m.Value.ListeDesBrevets.CabestanViolet()).Count();
+         FormationBaseCompletee.Valeur = membres.Where(m => m.Value.ListeDesFormations.BaseComplete()).Count();
       }
 
    }
