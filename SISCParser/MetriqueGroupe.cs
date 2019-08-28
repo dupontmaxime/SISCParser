@@ -64,13 +64,15 @@ namespace SISCParser
             valMetriqueOrdonnee.Reverse();
          int lastIndex = 0;
          int lastValue = -1;
+         int curRang = 0;
          foreach (KeyValuePair<string, MetriqueGroupe> rang in valMetriqueOrdonnee)
          {
+            curRang++;
             int curMetrique = ((ValeurMetrique)rang.Value.GetType().GetProperty(stringMetrique).GetValue(rang.Value)).Valeur;
             if (curMetrique != lastValue)
             {
                lastValue = curMetrique;
-               lastIndex += 1;
+               lastIndex = curRang;
             }
             ((ValeurMetrique)rang.Value.GetType().GetProperty(stringMetrique).GetValue(rang.Value)).Rang = lastIndex;
          }
@@ -102,14 +104,16 @@ namespace SISCParser
             valMetriqueOrdonnee.Reverse();
 
          int lastIndex = 0;
+         int curRang = 0;
          double lastValue = Double.MinValue;
          foreach (KeyValuePair<string, MetriqueGroupe> rang in valMetriqueOrdonnee)
          {
+            curRang++;
             double metriquePerCapita = rang.Value.PerCapita((ValeurMetrique)rang.Value.GetType().GetProperty(stringMetrique).GetValue(rang.Value));
             if (metriquePerCapita != lastValue)
             {
                lastValue = metriquePerCapita;
-               lastIndex += 1;
+               lastIndex = curRang;
             }
             ((ValeurMetrique)rang.Value.GetType().GetProperty(stringMetrique).GetValue(rang.Value)).RangPerCapita = lastIndex;
          }
