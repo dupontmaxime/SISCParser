@@ -164,7 +164,7 @@ namespace SISCParser
          foreach (Poste poste in ListeDesPostes)
          {
             if (poste.Actif()   &&
-               poste.PalierDuPoste.Groupe != string.Empty   &&
+               poste.PalierDuPoste.Groupe != null   &&
                !groupes.ContainsKey(poste.PalierDuPoste.Groupe)   )
             {
                groupes.Add(poste.PalierDuPoste.Groupe, int.Parse(poste.PalierDuPoste.Groupe));
