@@ -8,18 +8,22 @@ namespace SISCParser
 
       public VAJ(string remplie, string effectuee, string autorisee)
       {
-         if (remplie.Trim().Length > 0)
+         DateTime dateRemplie = new DateTime();
+         if (remplie.Trim().Length > 0 &&
+            DateTime.TryParseExact(remplie, "yyyyMMdd", null, System.Globalization.DateTimeStyles.None, out dateRemplie))
          {
-            Remplie = DateTime.ParseExact(remplie, "yyyyMMdd", null);
+            Remplie = dateRemplie;
          }
          else
          {
             Remplie = null;
          }
 
-         if (effectuee.Trim().Length > 0)
+         DateTime dateEffectuee = new DateTime();
+         if (effectuee.Trim().Length > 0 &&
+            DateTime.TryParseExact(effectuee, "yyyyMMdd", null, System.Globalization.DateTimeStyles.None, out dateEffectuee))
          {
-            Effectuee = DateTime.ParseExact(effectuee, "yyyyMMdd", null);
+            Effectuee = dateEffectuee;
          }
          else
          {
