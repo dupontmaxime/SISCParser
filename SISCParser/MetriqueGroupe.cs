@@ -59,6 +59,7 @@ namespace SISCParser
 
          valMetriqueOrdonnee = this.OrderBy(m => ((ValeurMetrique)m.Value.GetType().GetProperty(stringMetrique).GetValue(m.Value)).Valeur).ToList();
          valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.IdGroupe.Value != "d10-000").ToList();
+         valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.AnimateurActif.Valeur > 0).ToList();
          if (inverse)
             valMetriqueOrdonnee.Reverse();
          int lastIndex = 0;
@@ -98,6 +99,7 @@ namespace SISCParser
 
          valMetriqueOrdonnee = this.OrderBy(m => m.Value.PerCapita((ValeurMetrique)m.Value.GetType().GetProperty(stringMetrique).GetValue(m.Value))).ToList();
          valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.IdGroupe.Value != "d10-000").ToList();
+         valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.AnimateurActif.Valeur > 0).ToList();
          if (inverse)
             valMetriqueOrdonnee.Reverse();
 
@@ -134,7 +136,8 @@ namespace SISCParser
                      else if (prop.PropertyType == typeof(ValeurMetrique))
                      {
                         string baseName = prop.Name;
-                        stream.Write(baseName+"Valeur, "+baseName+"Rang");
+                        stream.Write(baseName+"Valeur, " + baseName+"Rang");
+                        stream.Write(", " + baseName+"ValeurPerCapita, " + baseName+"RangPerCapita");
                      }
                      iTitreProp++;
 
@@ -164,6 +167,7 @@ namespace SISCParser
                         {
                            ValeurMetrique valMetrique = (ValeurMetrique)prop.GetValue(metGroupe);
                            stream.Write(valMetrique.Valeur + ", " + valMetrique.Rang);
+                           stream.Write(", " + metGroupe.PerCapita(valMetrique).ToString("P0") + ", " + valMetrique.RangPerCapita);
                         }
                         iProp++;
 
