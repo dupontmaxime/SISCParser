@@ -228,7 +228,11 @@ namespace SISCParser
                if (fieldMetrique.PropertyType == typeof(ValeurMetrique))
                {
                   ValeurMetrique fieldValue = (ValeurMetrique)fieldMetrique.GetValue(metrique);
-                  txtGroupeDetail.Append(fieldValue.Nom + ": " + fieldValue.Valeur + " (" + fieldValue.Rang + " e)\n");
+                  txtGroupeDetail.Append(fieldValue.Nom);
+                  txtGroupeDetail.Append(": " + fieldValue.Valeur + " (" + fieldValue.Rang + " e)");
+                  if(!fieldValue.Absolu)
+                     txtGroupeDetail.Append(" " + metrique.PerCapita(fieldValue).ToString("P0") + " (" + fieldValue.RangPerCapita + " e)");
+                  txtGroupeDetail.Append("\n");
                }
                else
                   continue;
