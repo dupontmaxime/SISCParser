@@ -4,12 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace SISCParser
 {
-   class DictMetriques : Dictionary<String, MetriqueGroupe>
+    class DictMetriques : Dictionary<String, MetriqueGroupe>
    {
       public DictMetriques() { }
 
