@@ -80,10 +80,6 @@ namespace SISCParser
                 LVMembres.Items.Add(entreeMembre);
             }
 
-            EvaluerMetriques(listeDesMembres, listeGroupe);
-
-            metriquedesgroupes.Exporter(Metriquefilename);
-
             UpdateGroupeInfo();
         }
 
@@ -196,17 +192,18 @@ namespace SISCParser
 
         private void BtnOpenFileMetriquesGroupes_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.DefaultExt = ".csv";
-            saveFileDialog.Filter = "CSV|*.csv";
-            saveFileDialog.Title = "Choisir un fichier de metrique";
-            if (saveFileDialog.ShowDialog() == true)
-                Metriquefilename = saveFileDialog.FileName;
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.DefaultExt = ".xlsx";
+            openFileDialog.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+            openFileDialog.Title = "Choisir un fichier de métrique";
+            if (openFileDialog.ShowDialog() == true)
+                Metriquefilename = openFileDialog.FileName;
         }
 
-        private void BtnParseMembers_Click(object sender, RoutedEventArgs e)
+        private void BtnGenerateStats_Click(object sender, RoutedEventArgs e)
         {
-            ParseMembers(Memberfilename);
+            EvaluerMetriques(listeDesMembres, listeGroupe);
+            metriquedesgroupes.Exporter(Metriquefilename);
         }
 
         private void ComboGroupe_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -288,7 +285,7 @@ namespace SISCParser
                 {
                     Properties.Settings.Default.MemberFilePath = value;
                     Properties.Settings.Default.Save();
-                    if (!string.IsNullOrEmpty(Groupefilename) && !string.IsNullOrEmpty(Metriquefilename))
+                    if (!string.IsNullOrEmpty(Groupefilename))
                         ParseMembers(value);
                 }
             }
