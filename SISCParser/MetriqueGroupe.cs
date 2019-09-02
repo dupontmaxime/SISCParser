@@ -5,10 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace SISCParser
 {
-   class DictMetriques : Dictionary<String, MetriqueGroupe>
+    class DictMetriques : Dictionary<String, MetriqueGroupe>
    {
       public DictMetriques() { }
 
@@ -58,20 +59,17 @@ namespace SISCParser
 
          valMetriqueOrdonnee = this.OrderBy(m => ((ValeurMetrique)m.Value.GetType().GetProperty(stringMetrique).GetValue(m.Value)).Valeur).ToList();
          valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.IdGroupe.Value != "d10-000").ToList();
-         valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.AnimateurActif.Valeur > 0).ToList();
          if (inverse)
             valMetriqueOrdonnee.Reverse();
          int lastIndex = 0;
          int lastValue = -1;
-         int curRang = 0;
          foreach (KeyValuePair<string, MetriqueGroupe> rang in valMetriqueOrdonnee)
          {
-            curRang++;
             int curMetrique = ((ValeurMetrique)rang.Value.GetType().GetProperty(stringMetrique).GetValue(rang.Value)).Valeur;
             if (curMetrique != lastValue)
             {
                lastValue = curMetrique;
-               lastIndex = curRang;
+               lastIndex += 1;
             }
             ((ValeurMetrique)rang.Value.GetType().GetProperty(stringMetrique).GetValue(rang.Value)).Rang = lastIndex;
          }
@@ -98,7 +96,6 @@ namespace SISCParser
 
          valMetriqueOrdonnee = this.OrderBy(m => m.Value.PerCapita((ValeurMetrique)m.Value.GetType().GetProperty(stringMetrique).GetValue(m.Value))).ToList();
          valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.IdGroupe.Value != "d10-000").ToList();
-         valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.AnimateurActif.Valeur > 0).ToList();
          if (inverse)
             valMetriqueOrdonnee.Reverse();
 
@@ -116,79 +113,103 @@ namespace SISCParser
          }
       }
 
-      public void Exporter(string file)
-      {
-         try
-         {
-            using (TextWriter stream = new StreamWriter(file, false, Encoding.UTF8))
+        public void Exporter(string file)
+        {
+            Excel.Application oXL;
+            Excel._Workbook oWB;
+            Excel._Worksheet oSheet;
+
+            try
             {
-               if (stream != null)
-               {
-                  int propTitreCount = typeof(MetriqueGroupe).GetProperties().Count();
-                  int iTitreProp = 0;
-                  foreach (PropertyInfo prop in typeof(MetriqueGroupe).GetProperties())
-                  {
-                     if(prop.PropertyType == typeof(IdentifiantGroupe))
-                     {
-                        stream.Write("GroupeName, GroupeID");
-                     }
-                     else if (prop.PropertyType == typeof(ValeurMetrique))
-                     {
+                //Start Excel and get Application object.
+                oXL = new Excel.Application
+                {
+                    Visible = true
+                };
+
+                //Get a new workbook.
+                oWB = oXL.Workbooks.Add(Missing.Value);
+                oSheet = (Excel._Worksheet)oWB.ActiveSheet;
+
+                int propTitreCount = typeof(MetriqueGroupe).GetProperties().Count();
+                int cellColumn = 1;
+                foreach (PropertyInfo prop in typeof(MetriqueGroupe).GetProperties())
+                {
+                    if (prop.PropertyType == typeof(IdentifiantGroupe))
+                    {
+                        oSheet.Cells[1, cellColumn] = "GroupeName";
+                        cellColumn++;
+                        oSheet.Cells[1, cellColumn] = "GroupeId";
+                    }
+                    else if (prop.PropertyType == typeof(ValeurMetrique))
+                    {
                         string baseName = prop.Name;
-                        stream.Write(baseName+"Valeur, " + baseName+"Rang");
-                        stream.Write(", " + baseName+"ValeurPerCapita, " + baseName+"RangPerCapita");
-                     }
-                     iTitreProp++;
+                        oSheet.Cells[1, cellColumn] = baseName + "Valeur";
+                        cellColumn++;
+                        oSheet.Cells[1, cellColumn] = baseName + "Rang";
+                        cellColumn++;
+                        oSheet.Cells[1, cellColumn] = baseName + "ValeurPerCapita";
+                        cellColumn++;
+                        oSheet.Cells[1, cellColumn] = baseName + "RangPerCapita";
+                    }
+                    cellColumn++;
+                }
+                oSheet.get_Range("A1", "AZ1").Font.Bold = true;
+                oSheet.get_Range("A1", "AZ1").VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
 
-                     if (iTitreProp < propTitreCount)
-                     {
-                        stream.Write(", ");
-                     }
-                     else
-                     {
-                        stream.Write("\n");
-                     }
-                  }
-
-
-                  int propCount = typeof(MetriqueGroupe).GetProperties().Count();
-                  foreach (MetriqueGroupe metGroupe in this.Values)
-                  {
-                     int iProp = 0;
-                     foreach (PropertyInfo prop in metGroupe.GetType().GetProperties())
-                     {
+                int propCount = typeof(MetriqueGroupe).GetProperties().Count();
+                var cellRow = 2;
+                foreach (MetriqueGroupe metGroupe in Values)
+                {
+                    cellColumn = 1;
+                    foreach (PropertyInfo prop in metGroupe.GetType().GetProperties())
+                    {
                         if (prop.PropertyType == typeof(IdentifiantGroupe))
                         {
-                           IdentifiantGroupe idGroupe = (IdentifiantGroupe)prop.GetValue(metGroupe);
-                           stream.Write(idGroupe.Name+", "+idGroupe.Value);
+                            IdentifiantGroupe idGroupe = (IdentifiantGroupe)prop.GetValue(metGroupe);
+                            oSheet.Cells[cellRow, cellColumn] = idGroupe.Name;
+                            cellColumn++;
+                            oSheet.Cells[cellRow, cellColumn] = idGroupe.Value;
+                            cellColumn++;
                         }
                         else if (prop.PropertyType == typeof(ValeurMetrique))
                         {
-                           ValeurMetrique valMetrique = (ValeurMetrique)prop.GetValue(metGroupe);
-                           stream.Write(valMetrique.Valeur + ", " + valMetrique.Rang);
-                           stream.Write(", " + metGroupe.PerCapita(valMetrique).ToString("P0") + ", " + valMetrique.RangPerCapita);
+                            ValeurMetrique valMetrique = (ValeurMetrique)prop.GetValue(metGroupe);
+                            oSheet.Cells[cellRow, cellColumn] = valMetrique.Valeur;
+                            cellColumn++;
+                            oSheet.Cells[cellRow, cellColumn] = valMetrique.Rang;
+                            cellColumn++;
+                            oSheet.Cells[cellRow, cellColumn] = metGroupe.PerCapita(valMetrique).ToString("P0");
+                            cellColumn++;
+                            oSheet.Cells[cellRow, cellColumn] = valMetrique.RangPerCapita;
+                            cellColumn++;
                         }
-                        iProp++;
+                    }
+                    cellRow++;
+                }
 
-                        if (iProp < propCount)
-                        {
-                           stream.Write(", ");
-                        }
-                        else
-                        {
-                           stream.Write("\n");
-                        }
-                     }
-                  }
-               }
+                oSheet.get_Range("A1", "AZ1").EntireColumn.AutoFit();
+
+                oWB.SaveAs(file,
+                            Excel.XlFileFormat.xlOpenXMLWorkbook, Missing.Value, Missing.Value,
+                            false, false, Excel.XlSaveAsAccessMode.xlNoChange,
+                            Missing.Value, Missing.Value, Missing.Value, Missing.Value, Missing.Value);
+
+                oXL.Visible = true;
+                oXL.UserControl = true;
             }
-         }
-         catch (ArgumentNullException)
-         {
-            MessageBox.Show("Pas de fichier choisi pour la sauvegarde", "Pas de fichier choisi", MessageBoxButton.OK, MessageBoxImage.Warning);
-         }
-      }
-   }
+            catch (Exception theException)
+            {
+                string errorMessage;
+                errorMessage = "Error: ";
+                errorMessage = string.Concat(errorMessage, theException.Message);
+                errorMessage = string.Concat(errorMessage, " Line: ");
+                errorMessage = string.Concat(errorMessage, theException.Source);
+
+                MessageBox.Show(errorMessage, "Error");
+            }
+        }
+    }
 
    class ValeurMetrique
    {
