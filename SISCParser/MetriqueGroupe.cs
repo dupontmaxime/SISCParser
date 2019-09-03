@@ -143,6 +143,13 @@ namespace SISCParser
                         cellColumn++;
                         oSheet.Cells[1, cellColumn] = "GroupeId";
                     }
+                    else if (prop.PropertyType == typeof(ValeurMetriqueAbsolu))
+                    {
+                        string baseName = prop.Name;
+                        oSheet.Cells[1, cellColumn] = baseName + "Valeur";
+                        cellColumn++;
+                        oSheet.Cells[1, cellColumn] = baseName + "Rang";
+                    }   
                     else if (prop.PropertyType == typeof(ValeurMetrique))
                     {
                         string baseName = prop.Name;
@@ -175,6 +182,14 @@ namespace SISCParser
                             oSheet.Cells[cellRow, cellColumn] = idGroupe.Name;
                             cellColumn++;
                             oSheet.Cells[cellRow, cellColumn] = idGroupe.Value;
+                            cellColumn++;
+                        }
+                        else if (prop.PropertyType == typeof(ValeurMetriqueAbsolu))
+                        {
+                            ValeurMetrique valMetrique = (ValeurMetrique)prop.GetValue(metGroupe);
+                            oSheet.Cells[cellRow, cellColumn] = valMetrique.Valeur;
+                            cellColumn++;
+                            oSheet.Cells[cellRow, cellColumn] = valMetrique.Rang;
                             cellColumn++;
                         }
                         else if (prop.PropertyType == typeof(ValeurMetrique))
@@ -232,11 +247,19 @@ namespace SISCParser
       public bool Inverse { get; set; }
    }
 
+   class ValeurMetriqueAbsolu: ValeurMetrique
+   {
+      public ValeurMetriqueAbsolu(string nom, bool inverse=false)
+         : base(nom, true, inverse)
+      {
+      }
+   }
+
    class MetriqueGroupe
    {
       public MetriqueGroupe(IdentifiantGroupe groupe, List<KeyValuePair<string, Membre>> membres)
       {
-         AnimateurActif = new ValeurMetrique("Animateurs Actifs", true, true);
+         AnimateurActif = new ValeurMetriqueAbsolu("Animateurs Actifs", true);
          MultiplePosteSup = new ValeurMetrique("Membres avec plusieurs postes de supervision");
          MultiplePoste = new ValeurMetrique("Membres avec plusieurs postes");
          VAJIncomplete = new ValeurMetrique("VAJ incomplète");
@@ -258,7 +281,7 @@ namespace SISCParser
       }
 
       public IdentifiantGroupe IdGroupe { get; set; }
-      public ValeurMetrique AnimateurActif { get; set; }
+      public ValeurMetriqueAbsolu AnimateurActif { get; set; }
       public ValeurMetrique MultiplePosteSup { get; set; }
       public ValeurMetrique MultiplePoste { get; set; }
       public ValeurMetrique VAJIncomplete { get; set; }
