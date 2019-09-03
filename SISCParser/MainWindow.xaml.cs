@@ -146,28 +146,28 @@ namespace SISCParser
             metriquedesgroupes.ClasserMetriques();
         }
 
-      private void UpdateGroupeInfo()
-      {
-         StringBuilder txtGroupeDetail = new StringBuilder();
-         try
-         {
-            MetriqueGroupe metrique = metriquedesgroupes[GetSelectedGroupe()];
-            PropertyInfo[] fieldsMetrique = metrique.GetType().GetProperties();
-            foreach (PropertyInfo fieldMetrique in fieldsMetrique)
+        private void UpdateGroupeInfo()
+        {
+            StringBuilder txtGroupeDetail = new StringBuilder();
+            try
             {
-               if (fieldMetrique.PropertyType == typeof(ValeurMetrique))
-               {
-                  ValeurMetrique fieldValue = (ValeurMetrique)fieldMetrique.GetValue(metrique);
-                  txtGroupeDetail.Append(fieldValue.Nom + ": " + fieldValue.Valeur + " (" + fieldValue.Rang + " e)\n");
-               }
-               else
-                  continue;
+                MetriqueGroupe metrique = metriquedesgroupes[GetSelectedGroupe()];
+                PropertyInfo[] fieldsMetrique = metrique.GetType().GetProperties();
+                foreach (PropertyInfo fieldMetrique in fieldsMetrique)
+                {
+                    if (fieldMetrique.PropertyType == typeof(ValeurMetrique))
+                    {
+                        ValeurMetrique fieldValue = (ValeurMetrique)fieldMetrique.GetValue(metrique);
+                        txtGroupeDetail.Append(fieldValue.Nom + ": " + fieldValue.Valeur + " (" + fieldValue.Rang + " e)\n");
+                    }
+                    else
+                        continue;
+                }
             }
-         }
-         catch (KeyNotFoundException)
-         {
-            txtGroupeDetail.Append("Pas de groupe sélectionné");
-         }
+            catch (KeyNotFoundException)
+            {
+                txtGroupeDetail.Append("Pas de groupe sélectionné");
+            }
 
             GroupeInfo.Text = txtGroupeDetail.ToString();
         }
