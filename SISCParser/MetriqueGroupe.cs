@@ -59,6 +59,7 @@ namespace SISCParser
 
          valMetriqueOrdonnee = this.OrderBy(m => ((ValeurMetrique)m.Value.GetType().GetProperty(stringMetrique).GetValue(m.Value)).Valeur).ToList();
          valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.IdGroupe.Value != "d10-000").ToList();
+         valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.AnimateurActif.Valeur > 0).ToList();
          if (inverse)
             valMetriqueOrdonnee.Reverse();
          int lastIndex = 0;
@@ -96,6 +97,7 @@ namespace SISCParser
 
          valMetriqueOrdonnee = this.OrderBy(m => m.Value.PerCapita((ValeurMetrique)m.Value.GetType().GetProperty(stringMetrique).GetValue(m.Value))).ToList();
          valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.IdGroupe.Value != "d10-000").ToList();
+         valMetriqueOrdonnee = valMetriqueOrdonnee.Where(m => m.Value.AnimateurActif.Valeur > 0).ToList();
          if (inverse)
             valMetriqueOrdonnee.Reverse();
 
@@ -161,6 +163,9 @@ namespace SISCParser
                 var cellRow = 2;
                 foreach (MetriqueGroupe metGroupe in Values)
                 {
+                    if (metGroupe.AnimateurActif.Valeur <= 0)
+                        continue;
+
                     cellColumn = 1;
                     foreach (PropertyInfo prop in metGroupe.GetType().GetProperties())
                     {
