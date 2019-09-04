@@ -202,6 +202,11 @@ namespace SISCParser
 
         private void BtnGenerateStats_Click(object sender, RoutedEventArgs e)
         {
+            if(string.IsNullOrEmpty(Metriquefilename))
+            {
+                MessageBox.Show("Aucun fichier sélectionné pour la métrique", "Error");
+                return;
+            }
             EvaluerMetriques(listeDesMembres, listeGroupe);
             metriquedesgroupes.Exporter(Metriquefilename);
         }
