@@ -192,7 +192,7 @@ namespace SISCParser
 
         private void BtnOpenFileMetriquesGroupes_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog();
+            var openFileDialog = new SaveFileDialog();
             openFileDialog.DefaultExt = ".xlsx";
             openFileDialog.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
             openFileDialog.Title = "Choisir un fichier de métrique";
