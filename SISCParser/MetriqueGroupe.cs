@@ -139,7 +139,7 @@ namespace SISCParser
 
                 int propTitreCount = typeof(MetriqueGroupe).GetProperties().Count();
                 int cellColumn = 1;
-                foreach (PropertyInfo prop in typeof(MetriqueGroupe).GetProperties())
+                foreach (PropertyInfo prop in typeof(MetriqueGroupe).GetProperties().OrderBy(x => x.Name))
                 {
                     if (prop.PropertyType == typeof(IdentifiantGroupe))
                     {
@@ -178,7 +178,7 @@ namespace SISCParser
                         continue;
 
                     cellColumn = 1;
-                    foreach (PropertyInfo prop in metGroupe.GetType().GetProperties())
+                    foreach (PropertyInfo prop in metGroupe.GetType().GetProperties().OrderBy(x => x.Name))
                     {
                         if (prop.PropertyType == typeof(IdentifiantGroupe))
                         {
