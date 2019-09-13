@@ -316,7 +316,7 @@ namespace SISCParser
          IdGroupe = groupe;
          AnimateurActif.Valeur = membres.Where(m => m.Value.NbPostes > 0).Count();
          MultiplePosteSup.Valeur = membres.Where(m => m.Value.NbPostesSup > 1).Count();
-         MultiplePoste.Valeur = membres.Where(m => m.Value.NbPostes > 1).Count();
+         MultiplePoste.Valeur = membres.Where(m => m.Value.NbPostes >= 2).Count();
          VAJIncomplete.Valeur = membres.Where(m => (m.Value.Vaj.Statut == VAJ.VAJStatut.NON_REMPLIE) || (m.Value.Vaj.Statut == VAJ.VAJStatut.INCOMPLETE)).Count();
          PJIncomplete.Valeur = membres.Where(m => m.Value.PrioriteJeunesse == null).Count();
          CCIncomplete.Valeur = membres.Where(m => m.Value.CodeConduite == null).Count();

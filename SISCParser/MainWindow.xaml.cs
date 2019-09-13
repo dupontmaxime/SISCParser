@@ -155,7 +155,8 @@ namespace SISCParser
                 PropertyInfo[] fieldsMetrique = metrique.GetType().GetProperties();
                 foreach (PropertyInfo fieldMetrique in fieldsMetrique)
                 {
-                    if (fieldMetrique.PropertyType == typeof(ValeurMetrique))
+                    if (fieldMetrique.PropertyType == typeof(ValeurMetrique)  ||
+                        fieldMetrique.PropertyType == typeof(ValeurMetriqueAbsolu))
                     {
                         ValeurMetrique fieldValue = (ValeurMetrique)fieldMetrique.GetValue(metrique);
                         txtGroupeDetail.Append(fieldValue.Nom + ": " + fieldValue.Valeur + " (" + fieldValue.Rang + " e)\n");
@@ -173,10 +174,10 @@ namespace SISCParser
         }
 
         #endregion
-        
-        #region Events
 
-        private void btnOpenFile_Click(object sender, RoutedEventArgs e)
+      #region Events
+
+      private void btnOpenFile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
