@@ -46,6 +46,7 @@ namespace SISCParser
             using (TextFieldParser parser = new TextFieldParser(filename, Encoding.Default))
             {
                 LVMembres.Items.Clear();
+                listeDesMembres.Clear();
                 parser.TextFieldType = FieldType.Delimited;
                 parser.SetDelimiters(";");
                 while (!parser.EndOfData)
